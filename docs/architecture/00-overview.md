@@ -1,0 +1,380 @@
+# Delivery App MVP — Systems Architecture & Delivery Plan
+
+Establish the full system architecture, data model, and phased build plan for a construction-site delivery MVP — starting with a repo-committed set of Markdown + Mermaid design documents.
+
+> **Status:** Approved architecture. Phase 0 (design artifacts) in progress.
+> **Owner:** Delivery App team · **Last updated:** 2026-09-16
+
+---
+
+## Summary
+
+Build the systems needed for a construction-site delivery MVP: a Next.js app (three role-guarded UIs) on Supabase, with a Mailgun-driven email-cart intake that parses Home Depot / Lowe's share-cart emails into structured orders, a dispatcher console that drives the order through a guarded state machine, a driver job board with first-accept-wins dispatch, and Stripe Payment Links for collection.
+
+This document is the entry point and roadmap. Phases 1–7 below are the implementation sequence; the numbered documents in this directory expand each subsystem.
+
+---
+
+## Source material reviewed
+
+| Document | What it established |
+|---|---|
+| `External Notes/Low Tech Flow.pdf` (23pp) | Full manual runbook, 10 status names, 3 persona guides, email template, fee model |
+| `External Notes/Delivery App Workflow.pdf` (4pp) | Persona step lists, vNext ideas, 14 open questions |
+| `External Notes/MVP for Delivery App.pdf` (1p) | Four intake options, checkout requirements, deferred concepts |
+| `External Notes/Share Cart Invitation From Anthony Palumbi.eml` | Analyzed field-by-field — see [Findings](#findings-from-the-example-email) |
+
+---
+
+## Findings from the example email
+
+These five findings were derived by inspecting the real Home Depot share-cart email and drove several locked decisions. They are recorded here because they are the empirical basis for the parser design and the store-capture decision.
+
+| Finding | Evidence | Consequence |
+|---|---|---|
+| Full line items are in the email body | `Model #9988872`, `Store SKU #1014148280`, `Aisle`/`Bay` columns, qty `1`, `$216.60`, image URL `…/deckmate-deck-screws-9988872-64_400.jpg` | No scraping needed for items. Parsing is a solved, deterministic problem. |
+| **No store identifier anywhere** | 0 matches for store name/number/zip across 136KB of HTML. `pickup-store` is an empty CSS wrapper class, not data. | Confirms dispatcher-sets-store is required, not a shortcut. |
+| Shared cart page is bot-blocked | `curl` on the supplied `sharedCartId` URL → **HTTP 403** (Akamai Bot Manager) | Fetching the cart link is not a cheap MVP path. Rules out store-scraping. |
+| Items appear twice | `desktop_item_list` (visible) and `mobile_item_list` (`display:none`) both contain the cart | Parser must scope to `desktop_item_list` or dedupe, or every order doubles. |
+| HTML-only, no plain-text part | Single `text/html` MIME part, `quoted-printable` | Parser operates on HTML; Mailgun's `body-plain` is auto-synthesized and lossy. |
+
+---
+
+## Locked decisions
+
+| Area | Decision |
+|---|---|
+| Persistence | Supabase (Postgres + Auth + Storage + RLS) |
+| Front end | Next.js App Router, **one app, 3 route groups**: `/dispatch`, `/driver`, `/portal` |
+| Hosting | Vercel |
+| Email in + out | **Mailgun** inbound routes → webhook; Mailgun for outbound |
+| SMS | Twilio |
+| Payments | Stripe Payment Links + webhook |
+| Background jobs | **Inngest** durable workflows |
+| Intake paths | Per-company email alias **and** post-intake portal checkout |
+| Order identity | **Per-company alias only**; unmatched alias → review queue |
+| Company model | Company = org, **one portal login** per company |
+| Auth | Email-as-username + password (Supabase Auth) |
+| Store capture | **Dispatcher sets it manually** from a seeded store table |
+| Parsing | Deterministic parser → schema validation → LLM fallback → dispatcher review queue |
+| Item metadata | Email fields only. No enrichment API, no scraping. |
+| Quote | **Manual fee entry** by dispatcher |
+| Driver comms | In-app job board + SMS notify; first-accept-wins |
+| Customer UX | Simplified portal: login, history, order detail/status, checkout |
+| Photo gates | **Prompt but never block**; skip requires a reason |
+| Parallel run | **None.** No Slack, no Google Sheets. App is the sole system of record. |
+| Market | Greenville/Spartanburg, SC → Supabase `us-east-1` |
+| Docs | Markdown + Mermaid, committed in-repo |
+
+Each decision will have a corresponding ADR in `docs/adr/` (planned — Phase 0).
+
+---
+
+## MVP scope
+
+### In scope
+
+- Email alias intake → deterministic cart parse → order created
+- Dispatcher console: review queue, order board, item verification/edit, store assignment, fee entry, status transitions, complete-checkout-on-behalf, payment link send
+- Customer portal: login, order list + history, order detail with status timeline, checkout wizard (verify items → address + instructions → fees → accept → pay)
+- Driver app (mobile-first): job board, accept, status advance, photo upload (skippable with reason)
+- SMS/email notifications for checkout invite, job broadcast, payment request
+- Stripe Payment Links + paid-state webhook
+- Admin: companies + aliases + portal users, store seeding, driver management
+
+### Explicitly deferred
+
+Designed for, not built. Each item's extension hook will be documented in `architecture/12-deferred-and-extension-points.md` (planned — Phase 0).
+
+Item substitution · cancellation UI · automated customer status fan-out · multi-store orders · parts catalog / concierge procurement · smart iFrame · chat experience · aisle/bay data · product enrichment API · native mobile apps · driver payouts (Stripe Connect) · fee rule engine · Slack integration
+
+---
+
+## Target architecture
+
+```mermaid
+flowchart TB
+    subgraph Actors
+        C[Construction Customer]
+        D[Dispatcher]
+        R[Delivery Driver]
+    end
+
+    subgraph Retailers
+        HD[Home Depot]
+        LW["Lowe's"]
+    end
+
+    subgraph App["Next.js on Vercel (single app)"]
+        PORTAL["/portal — customer"]
+        DISP["/dispatch — dispatcher"]
+        DRIVER["/driver — driver PWA"]
+        API[Route handlers + server actions]
+    end
+
+    subgraph Supabase
+        PG[(Postgres + RLS)]
+        AUTH[Auth]
+        STORE[(Storage: evidence)]
+    end
+
+    MG["Mailgun<br/>inbound + outbound"]
+    TW[Twilio SMS]
+    ST[Stripe Payment Links]
+    ING[Inngest workflows]
+
+    C -->|builds cart| HD
+    C -->|builds cart| LW
+    HD -.->|share-cart email| MG
+    LW -.->|share-cart email| MG
+    MG -->|HMAC-signed webhook| API
+    API --> ING
+    ING --> API
+    API --> PG
+    API --> STORE
+    API --> MG
+    API --> TW
+    API --> ST
+    ST -->|paid webhook| API
+    C --> PORTAL
+    D --> DISP
+    R --> DRIVER
+    PORTAL --> AUTH
+    DISP --> AUTH
+    DRIVER --> AUTH
+```
+
+### Order lifecycle (guarded state machine)
+
+```mermaid
+stateDiagram-v2
+    [*] --> received
+    received --> needs_review : parse failed
+    needs_review --> awaiting_customer : dispatcher resolves items
+    received --> awaiting_customer : checkout invite sent
+    awaiting_customer --> customer_confirmed : items + address + fees accepted
+    awaiting_customer --> customer_confirmed : dispatcher completes on behalf
+    customer_confirmed --> driver_requested : broadcast to drivers
+    driver_requested --> driver_assigned : first accept wins
+    driver_assigned --> driver_at_store
+    driver_at_store --> items_purchased : receipt photo prompted
+    items_purchased --> en_route
+    en_route --> delivered : delivery photo prompted
+    delivered --> payment_requested : Stripe link sent
+    payment_requested --> paid : Stripe webhook
+    paid --> closed
+    cancelled --> [*]
+    closed --> [*]
+```
+
+`cancelled` exists in the enum and the transition map from day one, but has no UI in the MVP — that is what makes cancellation a small later addition rather than a refactor.
+
+### Parsing fallback ladder
+
+```mermaid
+flowchart TD
+    A[Inbound email arrives] --> B{Retailer identified<br/>from sender domain}
+    B -->|order.homedepot.com| C[HomeDepotCartParser]
+    B -->|lowes.com| D[LowesCartParser]
+    B -->|unknown| G[LLM extractor]
+    C --> E{Schema valid?<br/>zod}
+    D --> E
+    E -->|yes| F[Create order → received]
+    E -->|no| G
+    G --> H{Schema valid?}
+    H -->|yes| F
+    H -->|no| I[Order → needs_review]
+    I --> J[Dispatcher review queue]
+    J -->|paste/enter items| F
+```
+
+Every attempt — deterministic or LLM — is recorded in `parse_attempts` with parser version, output, and errors, so template drift is visible rather than silent.
+
+---
+
+## Data model
+
+```mermaid
+erDiagram
+    COMPANIES ||--o{ PROFILES : employs
+    COMPANIES ||--o{ COMPANY_SITES : has
+    COMPANIES ||--o{ ORDERS : places
+    INBOUND_EMAILS ||--o| ORDERS : becomes
+    ORDERS ||--|{ ORDER_ITEMS : contains
+    ORDERS ||--o{ ORDER_STATUS_EVENTS : logs
+    ORDERS ||--o{ JOB_OFFERS : broadcasts
+    ORDERS ||--o{ ATTACHMENTS : evidences
+    ORDERS ||--o{ NOTIFICATIONS : sends
+    ORDERS ||--o{ PAYMENTS : bills
+    RETAILER_STORES ||--o{ ORDERS : fulfills
+    PROFILES ||--o{ JOB_OFFERS : receives
+    INBOUND_EMAILS ||--o{ PARSE_ATTEMPTS : attempts
+
+    ORDERS {
+        uuid id PK
+        text order_number
+        uuid company_id FK
+        uuid inbound_email_id FK
+        uuid retailer_store_id FK
+        text retailer
+        text status
+        int materials_subtotal_cents
+        int sizing_fee_cents
+        int mileage_fee_cents
+        int total_cents
+        jsonb quote_breakdown
+        text delivery_address_json
+        text delivery_instructions
+        uuid assigned_driver_id FK
+        timestamptz created_at
+    }
+    ORDER_ITEMS {
+        uuid id PK
+        uuid order_id FK
+        int line_no
+        text description
+        text brand
+        text model_number
+        text store_sku
+        int quantity
+        int unit_price_cents
+        int line_total_cents
+        text image_url
+        text item_status
+    }
+    INBOUND_EMAILS {
+        uuid id PK
+        text mailgun_message_id
+        text recipient_alias
+        text sender_email
+        text subject
+        text body_html
+        text processing_status
+        uuid order_id FK
+    }
+```
+
+Full table list (Phase 1 migrations): `companies`, `profiles`, `company_sites`, `retailer_stores`, `inbound_emails`, `parse_attempts`, `orders`, `order_items`, `order_status_events`, `job_offers`, `attachments`, `notifications`, `payments`, plus enums for `user_role`, `order_status`, `retailer`, `job_offer_status`, `item_status`, `notification_status`, `payment_status`.
+
+Two design choices that protect the deferred features:
+
+- **`order_status_events` is an append-only event log.** Automated customer status emails become an Inngest fan-out on this table — no schema change.
+- **`quote_breakdown` is jsonb** alongside the scalar fee columns. Adding a fee rule engine later doesn't reshape the order table.
+
+---
+
+## Documentation structure
+
+```
+docs/
+  README.md                              # index + reading order
+  architecture/
+    00-overview.md                       # this document
+    01-system-context.md                 # C4 L1
+    02-containers.md                     # C4 L2
+    03-data-model.md                     # ERD + table-by-table reference
+    04-order-lifecycle.md                # state machine + transition/permission table
+    05-email-intake.md                   # Mailgun route, alias scheme, webhook contract
+    06-cart-parsing.md                   # parser design, HD field map, fallback ladder
+    07-dispatch.md                       # job offers, first-accept-wins
+    08-notifications.md                  # templates + trigger matrix
+    09-payments.md                       # Stripe links + webhook
+    10-auth-and-permissions.md           # roles, RLS, route guards
+    11-deployment-and-environments.md
+    12-deferred-and-extension-points.md  # each deferred item + its hook
+  adr/
+    0001-supabase-postgres.md
+    0002-single-nextjs-app-three-route-groups.md
+    0003-mailgun-for-inbound-cart-email.md
+    0004-deterministic-parser-with-llm-fallback.md
+    0005-inngest-durable-workflows.md
+    0006-stripe-payment-links.md
+    0007-email-password-auth.md
+    0008-dispatcher-assigns-store.md
+  runbooks/
+    customer-guide.md
+    dispatcher-guide.md
+    driver-guide.md
+    dry-run-checklist.md
+```
+
+---
+
+## Implementation roadmap
+
+### Phase 0 — Design artifacts (current)
+
+1. Create the `docs/` tree above.
+2. Write `00-overview.md`: locked decisions table, MVP in/out scope, the source findings.
+3. Write the architecture docs with embedded Mermaid diagrams (context, containers, ERD, state machine, intake sequence, dispatch sequence, delivery + payment sequence, parsing ladder, deployment).
+4. Write 8 ADRs — one per locked decision, each with context / decision / consequences / alternatives rejected.
+5. Rewrite the three persona runbooks against the *new* system (the PDFs describe the low-tech process and are now historical).
+6. Write `12-deferred-and-extension-points.md` mapping every deferred item to the specific hook that makes it cheap later.
+7. Export SVGs for any diagram that doesn't render cleanly in GitHub.
+
+### Phase 1 — Foundation
+
+Domain purchase + DNS/MX for Mailgun · Supabase project (`us-east-1`) · Vercel project · repo scaffold (Next.js, TS, Tailwind, shadcn/ui) · all migrations + RLS + enums · seed `retailer_stores` for Upstate SC · auth + role claims + three guarded route groups · CI (lint, typecheck, test).
+
+### Phase 2 — Email intake + parsing *(highest risk — deliberately early)*
+
+Mailgun route `match_recipient("(?P<alias>[^@]+)@orders.<domain>")` → `forward()` + `store(notify=…)` · webhook with HMAC verification, idempotency on message ID, fast ACK · `inbound_emails` persistence · `HomeDepotCartParser` with golden-file tests built from the provided `.eml` · validation + LLM fallback + review queue · Inngest workflow wiring.
+
+### Phase 3 — Dispatcher console
+
+Review queue · order board with aging indicators · order detail (verify/edit items, assign store, enter fees, advance status, complete-on-behalf) · admin for companies, aliases, portal users, stores, drivers.
+
+### Phase 4 — Customer portal + checkout
+
+Login · order list + history · order detail with status timeline · checkout wizard · saved job sites · checkout-invite email.
+
+### Phase 5 — Dispatch + driver app
+
+Job offers · `accept_job()` Postgres function for first-accept-wins · Twilio broadcast · mobile-first driver UI · status advance · photo upload with skip-reason.
+
+### Phase 6 — Payments
+
+Stripe Payment Link creation · send on `delivered` · `checkout.session.completed` webhook → `paid` · receipt email.
+
+### Phase 7 — Hardening
+
+Structured logging + error tracking · system-health panel · RLS test suite · concurrency test on the accept race · runbooks.
+
+---
+
+## Verification checklist
+
+- [ ] Every Mermaid block renders (validate with `mmdc`, or preview on GitHub before merging)
+- [ ] Each of the 8 locked decisions has a matching ADR
+- [ ] Traceability: every MVP item from `MVP for Delivery App.pdf` maps to either a doc section or an entry in `12-deferred-and-extension-points.md`
+- [ ] The three persona runbooks' steps map 1:1 onto transitions in `04-order-lifecycle.md` (no orphan states, no undocumented steps)
+- [ ] `06-cart-parsing.md` field map reproduces every field actually present in the sample `.eml`
+- [ ] Diagram review: confirm context, container, ERD, state machine, and the three sequence diagrams are legible and correct
+- [ ] Open blockers below are listed in this document
+
+---
+
+## Risks & considerations
+
+| Risk | Mitigation |
+|---|---|
+| **No Lowe's sample email** — `LowesCartParser` cannot be specified accurately | LLM fallback covers Lowe's on day one; capture a real Lowe's email before Phase 2 completes |
+| **No domain owned yet** — blocks Mailgun inbound entirely | Explicit Phase 1 prerequisite; this document uses `orders.example.com` placeholders |
+| Home Depot template drift silently breaks parsing | Golden-file tests + versioned parser + `parse_attempts` telemetry + review queue as backstop |
+| Mailgun `forward()` retries if the webhook is slow | ACK immediately, process in Inngest — never parse inline in the handler |
+| Job-accept race (two drivers accept simultaneously) | Enforced in a Postgres function with row locking, never in app code |
+| PII exposure (addresses, phones, receipt photos) | RLS on every table, private storage bucket, signed URLs only |
+| Three UIs in one app risks a muddled boundary | Route groups + role guards from commit one; the ADR records when to split |
+| "Prompt but never block" photos weakens the dispute evidence trail | Every skip records a reason and is visible on the order detail and to the dispatcher |
+| Portal is load-bearing with no email fallback for address/acceptance | Dispatcher can complete checkout on the customer's behalf; treat portal availability as critical during dry runs |
+
+---
+
+## Open blockers
+
+To resolve before Phase 2:
+
+1. **A real Lowe's share-cart email** — required to specify the second parser.
+2. **Domain name** — required for Mailgun inbound routes and MX records.
+3. **Stripe, Twilio, and Mailgun accounts** — Supabase and Vercel already exist.
+4. **Upstate SC store list** — confirm the radius and which Lowe's / Home Depot locations to seed.
