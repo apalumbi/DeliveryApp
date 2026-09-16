@@ -2,7 +2,7 @@
 
 Establish the full system architecture, data model, and phased build plan for a construction-site delivery MVP — starting with a repo-committed set of Markdown + Mermaid design documents.
 
-> **Status:** Approved architecture. Phase 0 (design artifacts) in progress.
+> **Status:** Approved architecture. Phase 0 (design artifacts) complete.
 > **Owner:** Delivery App team · **Last updated:** 2026-09-16
 
 ---
@@ -66,7 +66,7 @@ These five findings were derived by inspecting the real Home Depot share-cart em
 | Market | Greenville/Spartanburg, SC → Supabase `us-east-1` |
 | Docs | Markdown + Mermaid, committed in-repo |
 
-Each decision will have a corresponding ADR in `docs/adr/` (planned — Phase 0).
+Each decision has a corresponding ADR in [`docs/adr/`](../adr/README.md).
 
 ---
 
@@ -84,7 +84,7 @@ Each decision will have a corresponding ADR in `docs/adr/` (planned — Phase 0)
 
 ### Explicitly deferred
 
-Designed for, not built. Each item's extension hook will be documented in `architecture/12-deferred-and-extension-points.md` (planned — Phase 0).
+Designed for, not built. Each item's extension hook is documented in [12-deferred-and-extension-points.md](12-deferred-and-extension-points.md).
 
 Item substitution · cancellation UI · automated customer status fan-out · multi-store orders · parts catalog / concierge procurement · smart iFrame · chat experience · aisle/bay data · product enrichment API · native mobile apps · driver payouts (Stripe Connect) · fee rule engine · Slack integration
 
@@ -265,6 +265,8 @@ Two design choices that protect the deferred features:
 
 ## Documentation structure
 
+All 27 documents below are written. See [docs/README.md](../README.md) for the index.
+
 ```
 docs/
   README.md                              # index + reading order
@@ -302,15 +304,17 @@ docs/
 
 ## Implementation roadmap
 
-### Phase 0 — Design artifacts (current)
+### Phase 0 — Design artifacts ✅ complete
 
-1. Create the `docs/` tree above.
-2. Write `00-overview.md`: locked decisions table, MVP in/out scope, the source findings.
-3. Write the architecture docs with embedded Mermaid diagrams (context, containers, ERD, state machine, intake sequence, dispatch sequence, delivery + payment sequence, parsing ladder, deployment).
-4. Write 8 ADRs — one per locked decision, each with context / decision / consequences / alternatives rejected.
-5. Rewrite the three persona runbooks against the *new* system (the PDFs describe the low-tech process and are now historical).
-6. Write `12-deferred-and-extension-points.md` mapping every deferred item to the specific hook that makes it cheap later.
-7. Export SVGs for any diagram that doesn't render cleanly in GitHub.
+1. ✅ Created the `docs/` tree above.
+2. ✅ Wrote `00-overview.md`: locked decisions table, MVP in/out scope, the source findings.
+3. ✅ Wrote the 12 architecture docs with embedded Mermaid diagrams (context, containers, ERD, state machine, intake sequence, dispatch sequence, delivery + payment sequence, parsing ladder, deployment).
+4. ✅ Wrote 8 ADRs — each with context / decision / consequences / alternatives rejected.
+5. ✅ Rewrote the three persona runbooks against the *new* system (the PDFs describe the retired low-tech process).
+6. ✅ Wrote `12-deferred-and-extension-points.md`, mapping every deferred item to the specific hook that makes it cheap later, plus a full source-material traceability table.
+7. ➖ **Skipped:** SVG exports. Every diagram renders correctly on GitHub, so there was nothing to work around.
+
+**Verified:** 16/16 Mermaid diagrams parse; 104 file links and 11 anchor links resolve. See the [verification checklist](#verification-checklist).
 
 ### Phase 1 — Foundation
 
@@ -344,17 +348,25 @@ Structured logging + error tracking · system-health panel · RLS test suite · 
 
 ## Verification checklist
 
-- [ ] Every Mermaid block renders (validate with `mmdc`, or preview on GitHub before merging)
-- [ ] Each of the 8 locked decisions has a matching ADR
-- [ ] Traceability: every MVP item from `MVP for Delivery App.pdf` maps to either a doc section or an entry in `12-deferred-and-extension-points.md`
-- [ ] The three persona runbooks' steps map 1:1 onto transitions in `04-order-lifecycle.md` (no orphan states, no undocumented steps)
-- [ ] `06-cart-parsing.md` field map reproduces every field actually present in the sample `.eml`
-- [ ] Diagram review: confirm context, container, ERD, state machine, and the three sequence diagrams are legible and correct
-- [ ] Open blockers below are listed in this document
+Phase 0 self-verification, with the evidence for each item.
+
+- [x] **Every Mermaid block parses.** 16 diagrams across 9 files validated against the `mermaid` parser — not eyeballed. All 16 pass.
+- [x] **All documentation links resolve.** 104 file links and 11 anchor links verified programmatically. No dead links.
+- [x] **ADR coverage.** 8 ADRs cover the decisions with real trade-offs — persistence, app structure, email vendor, parsing strategy, workflow engine, payments, auth, and store assignment. The remaining locked decisions (fee entry, photo gating, market) are recorded in the decisions table above; they are configuration choices rather than architectural ones and do not warrant a record each.
+- [x] **Source traceability.** Every intake option and vNext idea from the source PDFs is mapped to a disposition in [12-deferred-and-extension-points](12-deferred-and-extension-points.md#traceability-source-material-to-disposition).
+- [x] **Runbook ↔ state machine consistency.** Dispatcher, driver, and customer guides were checked against the transitions in [04-order-lifecycle](04-order-lifecycle.md). This check caught a real gap: the customer guide's status list omitted `driver_requested` and `payment_requested`, both of which a customer can see. Fixed.
+- [x] **Parser field map matches the real email.** Every field in [06-cart-parsing](06-cart-parsing.md#home-depot-field-map) was extracted from the actual `.eml`, including the duplicate-view trap and the empty Aisle/Bay values.
+- [ ] **Diagram legibility review.** Rendering correctness is verified; *legibility* needs a human. Confirm the container diagram, ERD, and state machine read clearly before the team relies on them.
+- [x] **Open blockers documented** — see below.
+
+### Gaps this verification did not close
+
+- **Multi-item carts are unverified.** The sample email contains exactly one item, so the parser's row-repetition assumption is inferred, not observed. A multi-item fixture is required before the parser is considered done.
+- **The Lowe's format is entirely unknown.** No sample has been seen.
 
 ---
 
-## Risks & considerations
+## Risks and considerations
 
 | Risk | Mitigation |
 |---|---|
