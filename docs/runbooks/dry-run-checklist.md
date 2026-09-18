@@ -14,11 +14,11 @@ The system has no fallback to the old process — there is no Slack channel and 
 
 Three stages, each with an explicit exit criterion:
 
-| Stage | Participants | Purpose | Exit criterion |
-|---|---|---|---|
-| **1. Internal rehearsal** | Team only | Prove the software works end to end | A complete order from fixture email to `paid` |
-| **2. Customer onboarding** | Team + Mitchells | Prove the humans can use it | Mitchells complete a real checkout unaided |
-| **3. First live** | Everyone | Prove it works under real conditions | One real order delivered and paid |
+| Stage                      | Participants     | Purpose                              | Exit criterion                                |
+| -------------------------- | ---------------- | ------------------------------------ | --------------------------------------------- |
+| **1. Internal rehearsal**  | Team only        | Prove the software works end to end  | A complete order from fixture email to `paid` |
+| **2. Customer onboarding** | Team + Mitchells | Prove the humans can use it          | Mitchells complete a real checkout unaided    |
+| **3. First live**          | Everyone         | Prove it works under real conditions | One real order delivered and paid             |
 
 ---
 
@@ -37,7 +37,7 @@ Nothing below can be skipped. Several items have external lead times.
 - [ ] Vercel production deploy live
 - [ ] Stripe live keys configured, webhook endpoint registered
 - [ ] Twilio A2P 10DLC registration **approved** — this has a multi-day lead time; start it first
-- [ ] Inngest production app configured
+- [ ] Vercel Cron configured (notifications outbox, broadcast expiry)
 - [ ] LLM fallback key configured
 
 ### Data
@@ -61,7 +61,7 @@ Nothing below can be skipped. Several items have external lead times.
 
 - [ ] Every participant has read their guide: [dispatcher](dispatcher-guide.md), [driver](driver-guide.md), [customer](customer-guide.md)
 - [ ] Everyone knows who to call when something breaks
-- [ ] A decision-maker is available during the run — not reachable by email, *available*
+- [ ] A decision-maker is available during the run — not reachable by email, _available_
 
 ---
 
@@ -71,18 +71,18 @@ Nothing below can be skipped. Several items have external lead times.
 
 ### Script
 
-| # | Step | Who | Watch for |
-|---|---|---|---|
-| 1 | Send the fixture cart email to the test company's alias | Anyone | Arrives within a minute; order appears without manual intervention |
-| 2 | Confirm the parse | Dispatcher | Items match the email exactly; subtotal reconciles |
-| 3 | Set the store | Dispatcher | Correct store from the seeded list |
-| 4 | Enter fees and send the checkout invite | Dispatcher | Email arrives with correct items and totals |
-| 5 | Complete checkout | A stand-in customer | Address captured; price accepted; order advances |
-| 6 | Broadcast to drivers | Dispatcher | Both drivers get SMS **and** see it in the app |
-| 7 | **Both drivers tap Accept simultaneously** | Drivers | Exactly one succeeds; the other sees a clear "already taken" message |
-| 8 | Advance through store → purchased → en route → delivered | Driver | Photos upload; the customer is emailed |
-| 9 | Send the payment request | Dispatcher | Stripe link arrives; amount matches the order |
-| 10 | Pay | Stand-in customer | Order advances to `paid` automatically |
+| #   | Step                                                     | Who                 | Watch for                                                            |
+| --- | -------------------------------------------------------- | ------------------- | -------------------------------------------------------------------- |
+| 1   | Send the fixture cart email to the test company's alias  | Anyone              | Arrives within a minute; order appears without manual intervention   |
+| 2   | Confirm the parse                                        | Dispatcher          | Items match the email exactly; subtotal reconciles                   |
+| 3   | Set the store                                            | Dispatcher          | Correct store from the seeded list                                   |
+| 4   | Enter fees and send the checkout invite                  | Dispatcher          | Email arrives with correct items and totals                          |
+| 5   | Complete checkout                                        | A stand-in customer | Address captured; price accepted; order advances                     |
+| 6   | Broadcast to drivers                                     | Dispatcher          | Both drivers get SMS **and** see it in the app                       |
+| 7   | **Both drivers tap Accept simultaneously**               | Drivers             | Exactly one succeeds; the other sees a clear "already taken" message |
+| 8   | Advance through store → purchased → en route → delivered | Driver              | Photos upload; the customer is emailed                               |
+| 9   | Send the payment request                                 | Dispatcher          | Stripe link arrives; amount matches the order                        |
+| 10  | Pay                                                      | Stand-in customer   | Order advances to `paid` automatically                               |
 
 ### Deliberate failure tests
 
@@ -91,7 +91,7 @@ Run these in the same session. They are the point of the rehearsal.
 - [ ] **Send a cart for an unknown alias** → lands in the review queue, does not create a company
 - [ ] **Send a corrupted cart email** → parse fails → `needs_review` → dispatcher resolves it
 - [ ] **Send the same cart email twice** → exactly one order created
-- [ ] **Decline from every driver** → offers expire; dispatcher is notified; no silent stall
+- [ ] **Decline from every driver** → dispatcher is notified immediately; order flagged "nobody available"; no silent stall
 - [ ] **Complete checkout on the customer's behalf** → `confirmed_by` records the dispatcher
 - [ ] **Skip the receipt photo** → reason required; skip is visible on the order
 - [ ] **Change fees after a payment link was created** → the stale link is flagged
@@ -158,15 +158,15 @@ Every hesitation is a UX bug worth fixing before Stage 3.
 
 These are the specific things most likely to go wrong, based on how the system is built.
 
-| Signal | Meaning | Action |
-|---|---|---|
-| Order lands in `needs_review` | The parser failed | Check `parse_attempts` for the strategy and errors. Capture the email as a fixture |
-| Subtotal does not reconcile | We parsed the wrong rows, or double-parsed the duplicate mobile view | Do not approve. Capture the email |
-| Driver went to the wrong store | The manual store step failed | Confirm the store with the customer; consider showing it more prominently |
-| Nobody accepted | Pool too small, or SMS not delivered | Check Twilio delivery status, not just that it was sent |
-| Customer replied to the email instead of using the portal | The email isn't clear enough about the link | A template fix, not a process problem |
-| Payment link amount doesn't match | Fees changed after the link was created | The link must be recreated — this is by design |
-| Order stalled in `awaiting_customer` | Customer hasn't completed checkout | Call them. There is no automatic expiry |
+| Signal                                                    | Meaning                                                              | Action                                                                             |
+| --------------------------------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Order lands in `needs_review`                             | The parser failed                                                    | Check `parse_attempts` for the strategy and errors. Capture the email as a fixture |
+| Subtotal does not reconcile                               | We parsed the wrong rows, or double-parsed the duplicate mobile view | Do not approve. Capture the email                                                  |
+| Driver went to the wrong store                            | The manual store step failed                                         | Confirm the store with the customer; consider showing it more prominently          |
+| Nobody accepted                                           | Pool too small, or SMS not delivered                                 | Check Twilio delivery status, not just that it was sent                            |
+| Customer replied to the email instead of using the portal | The email isn't clear enough about the link                          | A template fix, not a process problem                                              |
+| Payment link amount doesn't match                         | Fees changed after the link was created                              | The link must be recreated — this is by design                                     |
+| Order stalled in `awaiting_customer`                      | Customer hasn't completed checkout                                   | Call them. There is no automatic expiry                                            |
 
 ---
 

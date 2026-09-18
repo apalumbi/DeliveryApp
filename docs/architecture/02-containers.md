@@ -8,17 +8,17 @@ The deployable units, what runs where, and how they communicate.
 
 ## Containers
 
-| Container | Technology | Responsibility |
-|---|---|---|
-| **Web application** | Next.js (App Router), deployed to Vercel | All three personas' UIs, plus route handlers for webhooks and server actions |
-| **Database** | Supabase Postgres | System of record. Enforces the state machine's uniqueness constraints and Row Level Security |
-| **Auth** | Supabase Auth | Email + password identity for all three roles |
-| **Object storage** | Supabase Storage | Receipt and delivery photos. Private bucket, signed URLs |
-| **Workflow engine** | Inngest | Durable multi-step work: parsing, notifications, offer expiry, payment follow-up |
-| **Inbound email** | Mailgun Routes | Receives cart emails, verifies DKIM, POSTs to our webhook |
-| **Outbound email** | Mailgun | Transactional email to customers |
-| **SMS** | Twilio | Driver job alerts |
-| **Payments** | Stripe Payment Links | Collection, with a webhook back into the app |
+| Container           | Technology                               | Responsibility                                                                               |
+| ------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------- |
+| **Web application** | Next.js (App Router), deployed to Vercel | All three personas' UIs, plus route handlers for webhooks and server actions                 |
+| **Database**        | Supabase Postgres                        | System of record. Enforces the state machine's uniqueness constraints and Row Level Security |
+| **Auth**            | Supabase Auth                            | Email + password identity for all three roles                                                |
+| **Object storage**  | Supabase Storage                         | Receipt and delivery photos. Private bucket, signed URLs                                     |
+| **Scheduled jobs**  | Vercel Cron                              | Timed sweeps: the notifications outbox and broadcast expiry                                  |
+| **Inbound email**   | Mailgun Routes                           | Receives cart emails, verifies DKIM, POSTs to our webhook                                    |
+| **Outbound email**  | Mailgun                                  | Transactional email to customers                                                             |
+| **SMS**             | Twilio                                   | Driver job alerts                                                                            |
+| **Payments**        | Stripe Payment Links                     | Collection, with a webhook back into the app                                                 |
 
 There is exactly **one application container**. The three personas are route groups inside it, not separate deployments. See [ADR-0002](../adr/0002-single-nextjs-app-three-route-groups.md).
 
@@ -49,7 +49,7 @@ flowchart TB
         Storage[("Storage<br/>evidence bucket")]
     end
 
-    Inngest["Inngest"]
+    Cron["Vercel Cron<br/>sweeps"]
     Mailgun["Mailgun"]
     Twilio["Twilio"]
     Stripe["Stripe"]
@@ -71,29 +71,28 @@ flowchart TB
 
     Mailgun -->|"POST /api/webhooks/mailgun/inbound"| Handlers
     Stripe -->|"POST /api/webhooks/stripe"| Handlers
-    Inngest -->|"POST /api/inngest"| Handlers
+    Cron -->|"GET /api/cron/*"| Handlers
 
-    Handlers -->|"send events"| Inngest
-    Inngest -->|"step: send email"| Mailgun
-    Inngest -->|"step: send SMS"| Twilio
-    Inngest -->|"step: create link"| Stripe
-    Inngest -->|"step: fallback parse"| LLM
+    Handlers -->|"send email"| Mailgun
+    Handlers -->|"send SMS"| Twilio
+    Handlers -->|"create link"| Stripe
+    Handlers -->|"fallback parse"| LLM
 ```
 
 ---
 
-## Why the workflow engine sits in the middle
+## What runs inline, and what runs on a schedule
 
-Several steps in this domain are **long-running, must survive failures, and cannot block a request**:
+Most work is fast enough to run in the request that triggered it:
 
-| Work | Why it can't be inline |
-|---|---|
-| Parsing an inbound cart | Mailgun retries if the webhook is slow. Parsing (especially the LLM fallback) can take seconds to tens of seconds. |
-| Waiting for a customer to complete checkout | Hours or days. Cannot hold a connection. |
-| Offer expiry | Needs a timer per offer. |
-| Retry on transient provider failure | Twilio and Stripe both fail transiently; each step needs independent retry. |
+| Work                                        | Where it runs                                                                                                                                               |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Parsing an inbound cart                     | **Inline.** The deterministic parser is sub-second; a failure is recorded and lands in the review queue, so nothing is lost by responding after the attempt |
+| Sending a notification                      | **Outbox.** The row is written with the state change, attempted immediately, and retried by a cron sweep                                                    |
+| Broadcast expiry                            | **Cron sweep.** A timer per open posting is just a query for orders older than the TTL                                                                      |
+| Waiting for a customer to complete checkout | **Nothing to run.** The state lives in the database until the customer acts                                                                                 |
 
-So the pattern is uniform: **route handlers validate, persist, enqueue, and return 200 fast.** Everything else happens as a durable workflow step. See [ADR-0005](../adr/0005-inngest-durable-workflows.md).
+So the pattern is: **handlers validate, persist, act, and respond; anything that can fail independently becomes an outbox row a sweep will retry.** There is no workflow engine in the MVP — see [ADR-0009](../adr/0009-inline-intake-and-cron-sweeps.md).
 
 ---
 
@@ -119,7 +118,9 @@ src/
       webhooks/
         mailgun/inbound/route.ts
         stripe/route.ts
-      inngest/route.ts
+      cron/
+        drain-notifications/route.ts
+        expire-broadcasts/route.ts
     login/
   lib/
     parsers/
@@ -140,20 +141,13 @@ src/
     notifications/
       templates/
       send.ts
+      outbox.ts                 # enqueue + drain
     payments/
       stripe.ts
     supabase/
       client.ts                 # browser client
       server.ts                 # RLS-scoped server client
-      admin.ts                  # service role — webhooks only
-  inngest/
-    client.ts
-    functions/
-      process-inbound-email.ts
-      send-checkout-invite.ts
-      broadcast-job-offer.ts
-      expire-job-offer.ts
-      request-payment.ts
+      admin.ts                  # service role — webhooks + cron only
 ```
 
 Two rules this layout encodes:
@@ -165,16 +159,15 @@ Two rules this layout encodes:
 
 ## Communication patterns
 
-| From → To | Pattern | Notes |
-|---|---|---|
-| Browser → Next.js | HTTPS, server actions + RSC | Session cookie from Supabase Auth |
-| Next.js → Postgres | `supabase-js` with the user's JWT | RLS applies |
+| From → To                 | Pattern                                 | Notes                                                |
+| ------------------------- | --------------------------------------- | ---------------------------------------------------- |
+| Browser → Next.js         | HTTPS, server actions + RSC             | Session cookie from Supabase Auth                    |
+| Next.js → Postgres        | `supabase-js` with the user's JWT       | RLS applies                                          |
 | Route handlers → Postgres | `supabase-js` with the **service role** | Bypasses RLS by design; webhooks are not user-scoped |
-| Next.js → Inngest | Event send (`inngest.send`) | Fire-and-forget from the request path |
-| Inngest → Next.js | Step callbacks to `/api/inngest` | Steps call back into our own functions |
-| Mailgun → Next.js | `POST` form-encoded, HMAC-signed | Must ACK fast |
-| Stripe → Next.js | `POST` JSON, signature-verified | Must ACK fast |
-| Next.js → Twilio | REST | Called from a workflow step |
+| Mailgun → Next.js         | `POST` form-encoded, HMAC-signed        | Processed inline; must respond within Mailgun's timeout |
+| Stripe → Next.js          | `POST` JSON, signature-verified         | Must ACK fast                                        |
+| Next.js → Twilio          | REST                                    | Called inline, or from a cron sweep                  |
+| Vercel Cron → Next.js     | GET `/api/cron/*`                       | Shared-secret header; drains the outbox and expires broadcasts |
 
 ---
 
@@ -182,10 +175,10 @@ Two rules this layout encodes:
 
 Three environments, described in detail in [11-deployment-and-environments](11-deployment-and-environments.md):
 
-| Environment | App | Database | Email | Payments |
-|---|---|---|---|---|
-| Local | `next dev` + Inngest dev server | Supabase CLI (local Postgres) | Mailgun sandbox | Stripe test |
-| Preview / staging | Vercel preview | Staging Supabase project | **Separate Mailgun subdomain** | Stripe test |
-| Production | Vercel production | Production Supabase project | Production subdomain | Stripe live |
+| Environment       | App               | Database                      | Email                          | Payments    |
+| ----------------- | ----------------- | ----------------------------- | ------------------------------ | ----------- |
+| Local             | `next dev`        | Supabase CLI (local Postgres) | Mailgun sandbox                | Stripe test |
+| Preview / staging | Vercel preview    | Staging Supabase project      | **Separate Mailgun subdomain** | Stripe test |
+| Production        | Vercel production | Production Supabase project   | Production subdomain           | Stripe live |
 
 The separate staging email subdomain is not a nicety — Mailgun routes are per-domain, so sharing a domain across environments would deliver every inbound cart email to both environments.

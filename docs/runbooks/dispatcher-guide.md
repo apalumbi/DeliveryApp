@@ -10,15 +10,15 @@ Operating the delivery platform, order by order.
 
 ## What changed from the old process
 
-| Old process | New process |
-|---|---|
-| Read the cart email in Gmail | The system parses it; you review the result |
-| Copy rows into a Google Sheet | Nothing to copy — the order exists |
-| Manually set a "status" cell | Status advances through the app |
-| Copy the sheet into a new tab, rename it, share a link | Nothing to copy |
-| Post to `#drivers` in Slack and wait | One button broadcasts; the system tracks acceptances |
-| Drivers reply in a thread; you transcribe updates | Drivers update their own status and upload their own photos |
-| Notice payment arrived, then set "Order Final" | Stripe tells the system; the order advances itself |
+| Old process                                            | New process                                                 |
+| ------------------------------------------------------ | ----------------------------------------------------------- |
+| Read the cart email in Gmail                           | The system parses it; you review the result                 |
+| Copy rows into a Google Sheet                          | Nothing to copy — the order exists                          |
+| Manually set a "status" cell                           | Status advances through the app                             |
+| Copy the sheet into a new tab, rename it, share a link | Nothing to copy                                             |
+| Post to `#drivers` in Slack and wait                   | One button broadcasts; the system tracks acceptances        |
+| Drivers reply in a thread; you transcribe updates      | Drivers update their own status and upload their own photos |
+| Notice payment arrived, then set "Order Final"         | Stripe tells the system; the order advances itself          |
 
 The dispatcher role becomes **exception handling and judgement**, not data entry.
 
@@ -92,7 +92,7 @@ The fee structure is not yet settled — that is why you enter fees rather than 
 
 ## 4. Send the checkout invite
 
-**Where:** order detail → *Send checkout invite*
+**Where:** order detail → _Send checkout invite_
 
 The customer receives an email with the item list, the full price breakdown, and a link to the portal. They verify the items, enter the delivery address and instructions, accept the price, and pay.
 
@@ -108,15 +108,17 @@ Do not do this without the customer's explicit confirmation on the record.
 
 ## 5. Dispatch
 
-**Where:** order detail → *Find a driver*
+**Where:** order detail → _Find a driver_
 
 Once the order is `customer_confirmed`, broadcast it. Every active driver is alerted by SMS and sees it in their app. **The first to accept wins** — you do not choose.
 
 Drivers see the store, the item count, and their payout. They do **not** see the customer's address until they accept.
 
+If a driver declines, you're notified and it shows on the order. If **every** active driver declines, the order is flagged **nobody available** — that's your cue to call around or widen the pool.
+
 ### If nobody accepts
 
-The offers expire and you are notified. Options:
+The broadcast expires and you are notified. Options:
 
 1. **Re-broadcast** — offers the job again to the same pool.
 2. **Widen the pool** — if a driver is inactive or unavailable, contact them.
@@ -146,16 +148,17 @@ When Stripe confirms payment, the order moves to `paid` on its own, and the cust
 
 ## Exception handling
 
-| Situation | What to do |
-|---|---|
-| Cart didn't parse | Review queue → correct items → verify the subtotal reconciles |
-| Email arrived at an unknown address | Review queue → attach to the right company or dismiss |
-| Customer won't complete checkout | Complete it on their behalf, with their confirmation on record |
-| Customer wants to change items | Edit items on the order detail, then re-send the checkout invite. **Any change invalidates an existing payment link** — the system flags this |
-| Nobody accepts the job | Re-broadcast, or contact drivers directly |
-| Assigned driver can't complete | Withdraw the assignment, re-broadcast |
-| Customer disputes the price | Check `order_status_events` and the `confirmed_by` field — the full history is there |
-| Payment link expired unpaid | Issue a new one |
+| Situation                           | What to do                                                                                                                                    |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cart didn't parse                   | Review queue → correct items → verify the subtotal reconciles                                                                                 |
+| Email arrived at an unknown address | Review queue → attach to the right company or dismiss                                                                                         |
+| Customer won't complete checkout    | Complete it on their behalf, with their confirmation on record                                                                                |
+| Customer wants to change items      | Edit items on the order detail, then re-send the checkout invite. **Any change invalidates an existing payment link** — the system flags this |
+| Nobody accepts the job              | Re-broadcast, or contact drivers directly                                                                                                     |
+| A driver declines                   | You're notified; the decline shows on the order. If all active drivers decline, call drivers directly                                         |
+| Assigned driver can't complete      | Withdraw the assignment, re-broadcast                                                                                                         |
+| Customer disputes the price         | Check `order_status_events` and the `confirmed_by` field — the full history is there                                                          |
+| Payment link expired unpaid         | Issue a new one                                                                                                                               |
 
 ---
 

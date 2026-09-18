@@ -24,12 +24,12 @@ When a job is available, you get a **text message** and it appears in your **Job
 
 Each job shows you:
 
-| Shown before you accept | Hidden until you accept |
-|---|---|
-| The store and its address | The customer's delivery address |
-| How many items | The customer's contact and drop-off instructions |
-| Your payout | |
-| Any special notes | |
+| Shown before you accept   | Hidden until you accept                          |
+| ------------------------- | ------------------------------------------------ |
+| The store and its address | The customer's delivery address                  |
+| How many items            | The customer's contact and drop-off instructions |
+| Your payout               |                                                  |
+| Any special notes         |                                                  |
 
 You can see enough to decide, but the customer's location is not exposed until you commit. This is deliberate.
 
@@ -41,7 +41,7 @@ Tap **Accept**. The job is yours.
 
 ### If you can't take it
 
-Tap **Decline**. Nothing happens to you — declines are not held against you and are not reported individually to the dispatcher.
+Tap **Decline** so the dispatcher knows. Declines aren't held against you, but they are reported — if everyone declines, the dispatcher starts calling around. Ignoring the job is worse than declining.
 
 ---
 
@@ -51,7 +51,7 @@ Tap **Decline**. Nothing happens to you — declines are not held against you an
 
 The job card shows the store address. The address is also in your phone's maps app — tap it to navigate.
 
-> **Check the store carefully.** The store was selected by the dispatcher, not by the system, and the cart email does not tell us which store the customer used. If something seems wrong — the items aren't sold here, the store is far from the delivery address — call the dispatcher *before* you buy anything.
+> **Check the store carefully.** The store was selected by the dispatcher, not by the system, and the cart email does not tell us which store the customer used. If something seems wrong — the items aren't sold here, the store is far from the delivery address — call the dispatcher _before_ you buy anything.
 
 ### 2. Buy the items
 
@@ -83,12 +83,12 @@ Mark **Delivered** and photograph the delivery. This is the customer's proof the
 
 ## Status buttons, in order
 
-| Button | When |
-|---|---|
-| **At Store** | You've arrived |
+| Button              | When                                              |
+| ------------------- | ------------------------------------------------- |
+| **At Store**        | You've arrived                                    |
 | **Items Purchased** | After buying and loading — photograph the receipt |
-| **En Route** | You're driving to the site |
-| **Delivered** | Materials are delivered — photograph the drop-off |
+| **En Route**        | You're driving to the site                        |
+| **Delivered**       | Materials are delivered — photograph the drop-off |
 
 You can only move forward. If you tap the wrong one, tell the dispatcher — they can correct it.
 

@@ -6,16 +6,17 @@ Format follows [Michael Nygard's ADR template](https://cognitect.com/blog/2011/1
 
 ## Index
 
-| ADR | Decision | Status |
-|---|---|---|
-| [0001](0001-supabase-postgres.md) | Supabase as the persistence, auth, and storage platform | Accepted |
-| [0002](0002-single-nextjs-app-three-route-groups.md) | A single Next.js application with three role-guarded route groups | Accepted |
-| [0003](0003-mailgun-for-inbound-cart-email.md) | Mailgun for inbound cart email and outbound customer email | Accepted |
-| [0004](0004-deterministic-parser-with-llm-fallback.md) | Deterministic parsers with an LLM fallback and a human backstop | Accepted |
-| [0005](0005-inngest-durable-workflows.md) | Inngest for durable workflows | Accepted |
-| [0006](0006-stripe-payment-links.md) | Stripe Payment Links for collection | Accepted |
-| [0007](0007-email-password-auth.md) | Email and password authentication | Accepted |
-| [0008](0008-dispatcher-assigns-store.md) | The dispatcher assigns the store | Accepted |
+| ADR                                                    | Decision                                                          | Status                                                      |
+|------------------------------------------------------|-----------------------------------------------------------------|-----------------------------------------------------------|
+| [0001](0001-supabase-postgres.md)                      | Supabase as the persistence, auth, and storage platform           | Accepted                                                    |
+| [0002](0002-single-nextjs-app-three-route-groups.md)   | A single Next.js application with three role-guarded route groups | Accepted                                                    |
+| [0003](0003-mailgun-for-inbound-cart-email.md)         | Mailgun for inbound cart email and outbound customer email        | Accepted                                                    |
+| [0004](0004-deterministic-parser-with-llm-fallback.md) | Deterministic parsers with an LLM fallback and a human backstop   | Accepted                                                    |
+| [0005](0005-inngest-durable-workflows.md)              | Inngest for durable workflows                                     | Superseded by [0009](0009-inline-intake-and-cron-sweeps.md) |
+| [0006](0006-stripe-payment-links.md)                   | Stripe Payment Links for collection                               | Accepted                                                    |
+| [0007](0007-email-password-auth.md)                    | Email and password authentication                                 | Accepted                                                    |
+| [0008](0008-dispatcher-assigns-store.md)               | The dispatcher assigns the store                                  | Accepted                                                    |
+| [0009](0009-inline-intake-and-cron-sweeps.md)          | Inline intake and cron-swept background work                      | Accepted                                                    |
 
 ## Adding a record
 

@@ -29,7 +29,7 @@ flowchart TD
     K -->|dispatcher enters/corrects items| H
 ```
 
-Tier 1 is free, instant, and exact. Tier 2 handles template drift and new retailers. Tier 3 handles everything else without blocking a customer's order.
+Tier 1 is free, instant, and exact. Tier 2 handles template drift and new retailers. Tier 3 handles everything else without blocking a customer's order. All three tiers run **inline** in the webhook request; a failure is recorded and queued for a dispatcher rather than retried blindly.
 
 **Every attempt is recorded in `parse_attempts`** with strategy, parser version, output, and validation errors. Silent drift is the failure mode we are guarding against: a retailer changing a table class would otherwise quietly produce wrong orders.
 
@@ -172,15 +172,16 @@ A cart that fails reconciliation is treated as a **parse failure** and escalates
 
 ## LLM fallback contract
 
-| Aspect | Rule |
-|---|---|
-| Trigger | Deterministic parser returned `ok: false`, or its output failed validation |
-| Input | `body_html` with `<style>`, `<script>`, HTML comments, and tracking URLs stripped; truncated to a fixed budget |
-| Output | JSON conforming to `CartSchema` |
-| Validation | **Identical** to the deterministic path, including reconciliation |
-| Model + token usage | Recorded on `parse_attempts` |
-| On failure | Order → `needs_review`; never a partially-populated order |
-| PII | Only what the retailer already placed in the cart email. No customer identifiers are added |
+| Aspect              | Rule                                                                                                           |
+|-------------------|--------------------------------------------------------------------------------------------------------------|
+| Trigger             | Deterministic parser returned `ok: false`, or its output failed validation                                     |
+| Timing              | Runs in the same request, under a time budget. A timeout is a parse failure, not a lost email                  |
+| Input               | `body_html` with `<style>`, `<script>`, HTML comments, and tracking URLs stripped; truncated to a fixed budget |
+| Output              | JSON conforming to `CartSchema`                                                                                |
+| Validation          | **Identical** to the deterministic path, including reconciliation                                              |
+| Model + token usage | Recorded on `parse_attempts`                                                                                   |
+| On failure          | Order → `needs_review`; never a partially-populated order                                                      |
+| PII                 | Only what the retailer already placed in the cart email. No customer identifiers are added                     |
 
 An LLM response is never trusted on its own. It is a candidate that must reconcile arithmetically before it becomes an order.
 

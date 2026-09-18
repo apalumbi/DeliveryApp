@@ -70,12 +70,12 @@ This is enforced by storing `payments.amount_cents` at creation and comparing it
 
 ## Webhook
 
-| Property | Value |
-|---|---|
-| Endpoint | `POST /api/webhooks/stripe` |
-| Verification | Stripe signature header, verified against the endpoint secret |
-| Events handled | `checkout.session.completed` |
-| Response | `200` immediately; work enqueued |
+| Property       | Value                                                         |
+|--------------|-------------------------------------------------------------|
+| Endpoint       | `POST /api/webhooks/stripe`                                   |
+| Verification   | Stripe signature header, verified against the endpoint secret |
+| Events handled | `checkout.session.completed`                                  |
+| Response       | `200` after the webhook is processed                          |
 
 Handling:
 
@@ -84,7 +84,7 @@ Handling:
 3. If already `paid`, return `200` — Stripe retries, and this must be a no-op.
 4. Compare `amount_total` against `payments.amount_cents`. A mismatch sets a reconciliation flag and does **not** mark the order paid.
 5. Update `payments` → `paid`, then call `transitionOrder(order, 'paid')`.
-6. Enqueue `payment_received`.
+6. Send `payment_received` (outbox row + immediate attempt).
 
 The `payments.stripe_session_id` unique constraint is what makes step 3 safe under Stripe's at-least-once delivery.
 

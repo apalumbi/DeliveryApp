@@ -26,17 +26,16 @@ A fourth role — **Admin** — exists in the permission model but is not a sepa
 
 ## External systems
 
-| System | Role | Direction | Data crossing |
-|---|---|---|---|
-| **Home Depot website** | Where the customer builds and shares the cart | Out only | None — we never call Home Depot |
-| **Lowe's website** | Same | Out only | None |
-| **Mailgun** | Receives inbound cart emails; sends outbound customer email | In + Out | Inbound: raw MIME cart email. Outbound: transactional email to customers |
-| **Twilio** | SMS notifications to drivers | Out | Driver phone number, short job summary |
-| **Stripe** | Collects payment | Out + In | Out: order total, description. In: `checkout.session.completed` webhook |
-| **Inngest** | Runs durable workflows | Out + In | Out: event payloads. In: step callbacks into our app |
-| **LLM provider** | Fallback cart extraction when the deterministic parser fails | Out | Outbound: sanitized email HTML. Inbound: structured JSON |
-| **Supabase** | Postgres, Auth, file storage | Out | All application data |
-| **Vercel** | Hosting | — | — |
+| System                 | Role                                                         | Direction | Data crossing                                                            |
+|----------------------|------------------------------------------------------------|---------|------------------------------------------------------------------------|
+| **Home Depot website** | Where the customer builds and shares the cart                | Out only  | None — we never call Home Depot                                          |
+| **Lowe's website**     | Same                                                         | Out only  | None                                                                     |
+| **Mailgun**            | Receives inbound cart emails; sends outbound customer email  | In + Out  | Inbound: raw MIME cart email. Outbound: transactional email to customers |
+| **Twilio**             | SMS notifications to drivers                                 | Out       | Driver phone number, short job summary                                   |
+| **Stripe**             | Collects payment                                             | Out + In  | Out: order total, description. In: `checkout.session.completed` webhook  |
+| **LLM provider**       | Fallback cart extraction when the deterministic parser fails | Out       | Outbound: sanitized email HTML. Inbound: structured JSON                 |
+| **Supabase**           | Postgres, Auth, file storage                                 | Out       | All application data                                                     |
+| **Vercel**             | Hosting                                                      | —         | —                                                                        |
 
 ### A note on the retailers
 
@@ -65,7 +64,6 @@ flowchart TB
     Mailgun["Mailgun<br/><i>email in + out</i>"]
     Twilio["Twilio<br/><i>SMS</i>"]
     Stripe["Stripe<br/><i>payments</i>"]
-    Inngest["Inngest<br/><i>workflows</i>"]
     LLM["LLM provider<br/><i>parse fallback</i>"]
 
     Customer -->|"builds & shares cart"| HD
@@ -84,8 +82,6 @@ flowchart TB
     Twilio -->|"SMS"| Driver
     Platform -->|"creates payment links"| Stripe
     Stripe -->|"payment webhook"| Platform
-    Platform -->|"durable workflow steps"| Inngest
-    Inngest -->|"step callbacks"| Platform
     Platform -->|"fallback extraction"| LLM
 ```
 

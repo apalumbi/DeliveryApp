@@ -78,13 +78,13 @@ A low-priority `catch_all()` route handles mail to unknown local parts — see [
 
 ## Webhook contract
 
-| Property | Value |
-|---|---|
-| Endpoint | `POST /api/webhooks/mailgun/inbound` |
-| Content type | `application/x-www-form-urlencoded`, or `multipart/form-data` when attachments are present |
-| Authentication | Mailgun HMAC signature — see below |
-| Success response | `200` with an empty body |
-| Target latency | **Under 1 second.** Persist and enqueue; never parse inline |
+| Property         | Value                                                                                                                   |
+|----------------|-----------------------------------------------------------------------------------------------------------------------|
+| Endpoint         | `POST /api/webhooks/mailgun/inbound`                                                                                    |
+| Content type     | `application/x-www-form-urlencoded`, or `multipart/form-data` when attachments are present                              |
+| Authentication   | Mailgun HMAC signature — see below                                                                                      |
+| Success response | `200` with an empty body                                                                                                |
+| Target latency   | Under Mailgun's timeout. The deterministic path is sub-second; the LLM fallback (when enabled) runs under a time budget |
 
 ### Payload fields we consume
 
@@ -123,30 +123,28 @@ sequenceDiagram
     participant MG as Mailgun
     participant WH as /api/webhooks/mailgun/inbound
     participant DB as Postgres
-    participant IG as Inngest
     participant P as Parser
 
     HD->>MG: share-cart email to fixhome@orders.example.com
     MG->>MG: DKIM verify, parse MIME
     MG->>WH: POST (HMAC-signed, form-encoded)
     WH->>WH: verify signature + timestamp + token
-    WH->>DB: insert inbound_emails (ON CONFLICT mailgun_message_id DO NOTHING)
-    alt duplicate delivery
-        WH-->>MG: 200 (already processed)
-    else new
-        WH->>IG: send event "inbound-email/received"
-        WH-->>MG: 200 (fast ACK)
-        IG->>P: parse body-html
+    WH->>DB: insert inbound_emails (ON CONFLICT DO NOTHING)
+    alt already processed
+        WH-->>MG: 200 (no-op)
+    else new, or previous attempt unfinished
+        WH->>P: parse body-html (inline)
         P->>DB: write parse_attempts
         alt valid
-            P->>DB: create order -> received
+            P->>DB: create order -> received (unique per inbound_email_id)
         else invalid
-            P->>DB: order -> needs_review
+            P->>DB: order -> needs_review + dispatcher alert
         end
+        WH-->>MG: 200
     end
 ```
 
-The `200` is returned **before** parsing begins. Parsing is slow and fallible; Mailgun's retry behaviour should be reserved for genuine delivery failures, not for our parser having a bad day.
+Parsing runs **inline**, before the `200` is returned. The deterministic path is sub-second, so this costs nothing on the common path; a failure is recorded and lands in the review queue rather than being retried blindly.
 
 ---
 
@@ -154,9 +152,12 @@ The `200` is returned **before** parsing begins. Parsing is slow and fallible; M
 
 Mailgun retries on non-2xx and can deliver duplicates. `inbound_emails.mailgun_message_id` is unique, and the insert uses `ON CONFLICT DO NOTHING`.
 
-If the conflict affects zero rows, the email is a duplicate: return `200` immediately and do not re-emit the Inngest event. Without this, a retry storm produces duplicate orders.
+A retry is treated as **recovery, not a no-op**:
 
-The Inngest workflow is **also** keyed on `inbound_email_id` so that a replayed event is a no-op.
+- If the existing row is already `parsed` or `needs_review`, the delivery is a duplicate — return `200` and do nothing.
+- If the existing row is still `pending` or `failed` — a previous attempt did not finish — **re-process it**. A retry of a timed-out delivery is exactly the recovery path we want.
+
+Order creation is idempotent on top of this: `orders.inbound_email_id` is unique, so two attempts on the same email cannot produce two orders. The second insert fails the constraint and returns `200`.
 
 ---
 

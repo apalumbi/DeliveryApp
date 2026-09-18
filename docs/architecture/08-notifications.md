@@ -8,10 +8,10 @@ Every message the system sends, what triggers it, and how duplicates are prevent
 
 ## Channels
 
-| Channel | Provider | Used for |
-|---|---|---|
-| Email | Mailgun | Customer-facing: acknowledgements, checkout invites, payment requests, receipts |
-| SMS | Twilio | Driver-facing: job available, job assigned |
+| Channel | Provider | Used for                                                                        |
+| ------- | -------- | ------------------------------------------------------------------------------- |
+| Email   | Mailgun  | Customer-facing: acknowledgements, checkout invites, payment requests, receipts |
+| SMS     | Twilio   | Driver-facing: job available, job assigned                                      |
 
 SMS is reserved for drivers because it is the only channel with a response-time expectation. Customers are email-native — they started the interaction with email.
 
@@ -19,19 +19,21 @@ SMS is reserved for drivers because it is the only channel with a response-time 
 
 ## Trigger matrix
 
-| Key | Channel | Trigger | Recipient | MVP |
-|---|---|---|---|---|
-| `order_received_ack` | email | Order → `received` | Customer | ✓ |
-| `parse_failed_internal` | email | Order → `needs_review` | Dispatchers | ✓ |
-| `checkout_invite` | email | Order → `awaiting_customer` | Customer | ✓ |
-| `job_broadcast` | SMS | Order → `driver_requested` | Eligible drivers | ✓ |
-| `job_assigned` | SMS | Offer accepted | Winning driver | ✓ |
-| `order_confirmed` | email | Order → `customer_confirmed` | Customer | ✓ |
-| `driver_en_route` | email | Order → `en_route` | Customer | ✓ |
-| `payment_request` | email | Order → `payment_requested` | Customer | ✓ |
-| `payment_received` | email | Order → `paid` | Customer | ✓ |
-| `order_stalled` | email | Order aging in `awaiting_customer` | Customer | deferred |
-| `status_update_*` | email / SMS | Any transition | Customer | deferred |
+| Key                     | Channel     | Trigger                            | Recipient          | MVP      |
+| ----------------------- | ----------- | ---------------------------------- | ------------------ | -------- |
+| `order_received_ack`    | email       | Order → `received`                 | Customer           | ✓        |
+| `parse_failed_internal` | email       | Order → `needs_review`             | Dispatchers        | ✓        |
+| `checkout_invite`       | email       | Order → `awaiting_customer`        | Customer           | ✓        |
+| `job_broadcast`         | SMS         | Order → `driver_requested`         | All active drivers | ✓        |
+| `job_assigned`          | SMS         | Posting accepted                   | Winning driver     | ✓        |
+| `job_declined`          | email       | Driver declines a posting          | Dispatchers        | ✓        |
+| `broadcast_expired`     | email       | Broadcast TTL passes with no acceptance | Dispatchers        | ✓        |
+| `order_confirmed`       | email       | Order → `customer_confirmed`       | Customer           | ✓        |
+| `driver_en_route`       | email       | Order → `en_route`                 | Customer           | ✓        |
+| `payment_request`       | email       | Order → `payment_requested`        | Customer           | ✓        |
+| `payment_received`      | email       | Order → `paid`                     | Customer           | ✓        |
+| `order_stalled`         | email       | Order aging in `awaiting_customer` | Customer           | deferred |
+| `status_update_*`       | email / SMS | Any transition                     | Customer           | deferred |
 
 The deferred automated status fan-out is the single highest-value addition after the MVP. It is cheap because `order_status_events` already records every transition — see [12-deferred-and-extension-points](12-deferred-and-extension-points.md).
 
@@ -39,15 +41,16 @@ The deferred automated status fan-out is the single highest-value addition after
 
 ## Idempotency
 
-**`notifications.dedupe_key` is unique**, and is `order_id:template_key` for order-scoped messages (with a counter suffix for legitimately repeatable ones).
+**`notifications.dedupe_key` is unique**, and is `order_id:template_key` for order-scoped messages (driver-scoped sends append the driver id; a counter suffix covers legitimately repeatable ones).
 
-This is not defensive padding. Workflow engines retry steps by design, and the failure it prevents is severe: a customer receiving two payment requests for one order reads as either a scam or a system they cannot trust.
+This is not defensive padding. Sends are retried by the outbox sweep, and the failure a duplicate prevents is severe: a customer receiving two payment requests for one order reads as either a scam or a system they cannot trust.
 
 The send path is:
 
-1. Attempt `INSERT … ON CONFLICT (dedupe_key) DO NOTHING`.
-2. If zero rows inserted, this message was already sent — skip and return success.
-3. Otherwise call the provider, then update the row with the provider message id and status.
+1. `INSERT … ON CONFLICT (dedupe_key) DO NOTHING` — in the same transaction as the state change that triggered it.
+2. If zero rows inserted, this message was already handled — skip and return success.
+3. Attempt delivery immediately, then update the row with the provider message id and status.
+4. On failure, leave the row `queued`/`failed` with `attempts` incremented — the outbox sweep retries it.
 
 The insert happens **before** the provider call, so a crash mid-send leaves a row in `queued` rather than producing a duplicate on retry.
 
@@ -55,13 +58,13 @@ The insert happens **before** the provider call, so a crash mid-send leaves a ro
 
 ## Delivery tracking
 
-| Status | Meaning |
-|---|---|
-| `queued` | Row written; provider not yet called, or the call is in flight |
-| `sent` | Provider accepted the message |
-| `delivered` | Provider confirmed delivery (webhook, where supported) |
-| `failed` | Provider rejected, or retries exhausted |
-| `bounced` | Email bounce reported by Mailgun |
+| Status      | Meaning                                                        |
+| ----------- | -------------------------------------------------------------- |
+| `queued`    | Row written; provider not yet called, or the call is in flight |
+| `sent`      | Provider accepted the message                                  |
+| `delivered` | Provider confirmed delivery (webhook, where supported)         |
+| `failed`    | Provider rejected, or retries exhausted                        |
+| `bounced`   | Email bounce reported by Mailgun                               |
 
 Mailgun and Twilio delivery webhooks update these. Failures surface in the dispatcher console's system-health view alongside failed parses.
 
@@ -73,18 +76,18 @@ Templates are versioned files in `src/lib/notifications/templates/`, rendered se
 
 ### Variables
 
-| Variable | Source |
-|---|---|
-| `company.name` | `companies` |
-| `order.order_number` | `orders` |
-| `order.items[]` | `order_items` |
-| `order.materials_subtotal` | `orders` |
-| `order.sizing_fee` / `order.mileage_fee` | `orders` |
-| `order.total` | `orders` |
-| `order.delivery_address` | `orders.delivery_address` |
-| `checkout_url` | Signed portal link |
-| `payment_url` | Stripe Payment Link |
-| `driver.name` / `driver.phone` | `profiles` |
+| Variable                                 | Source                    |
+| ---------------------------------------- | ------------------------- |
+| `company.name`                           | `companies`               |
+| `order.order_number`                     | `orders`                  |
+| `order.items[]`                          | `order_items`             |
+| `order.materials_subtotal`               | `orders`                  |
+| `order.sizing_fee` / `order.mileage_fee` | `orders`                  |
+| `order.total`                            | `orders`                  |
+| `order.delivery_address`                 | `orders.delivery_address` |
+| `checkout_url`                           | Signed portal link        |
+| `payment_url`                            | Stripe Payment Link       |
+| `driver.name` / `driver.phone`           | `profiles`                |
 
 ### The checkout invite
 
@@ -101,12 +104,12 @@ Unlike the old email, **it does not ask the customer to reply with an address.**
 
 ## Failure handling
 
-| Failure | Behaviour |
-|---|---|
-| Provider returns a transient error | Retry with backoff inside the Inngest step |
-| Provider returns a permanent error (bad address) | Mark `failed`; surface to dispatchers; do not retry |
-| Send fails entirely | The order's status change **stands** — it was already committed. The notification is retried independently |
-| Bounce reported later | Update to `bounced`; surface to dispatchers so a bad customer address gets fixed |
+| Failure                                          | Behaviour                                                                                                  |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| Provider returns a transient error               | Retried by the outbox sweep with backoff                                                                   |
+| Provider returns a permanent error (bad address) | Mark `failed`; surface to dispatchers; do not retry                                                        |
+| Send fails entirely                              | The order's status change **stands** — it was already committed. The notification is retried independently |
+| Bounce reported later                            | Update to `bounced`; surface to dispatchers so a bad customer address gets fixed                           |
 
 The ordering here is deliberate: a notification failure must never roll back a state change. The order is the source of truth; the message is a consequence of it.
 

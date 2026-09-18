@@ -34,7 +34,7 @@ Use **Mailgun** for both inbound (Routes with `store()` + `forward()`) and outbo
 
 - **Routes are scoped per domain.** Staging and production must use separate subdomains, or every inbound cart email is delivered to both environments. This is an operational constraint we must honour, not a preference.
 - Mailgun's `forward()` POST is form-encoded (or multipart when attachments are present), which is less convenient than JSON.
-- Mailgun retries on a slow response, so the webhook must acknowledge quickly and defer work — this is what forces the Inngest dependency in the request path.
+- Mailgun retries on a slow response, so the webhook must process quickly and be idempotent — a retry of an unfinished delivery is re-processed, not duplicated (see [ADR-0009](0009-inline-intake-and-cron-sweeps.md)).
 - Deliverability for outbound depends on SPF/DKIM/DMARC being configured correctly, which is a prerequisite we must not skip.
 
 ## Alternatives considered

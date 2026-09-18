@@ -1,6 +1,6 @@
 # 07 — Dispatch
 
-Offering a confirmed order to drivers and resolving the race when several accept.
+Posting a confirmed order to drivers and resolving the race when several accept.
 
 > **Status:** Planned design. Not yet implemented. See [04-order-lifecycle](04-order-lifecycle.md) for the transition this drives.
 
@@ -11,178 +11,124 @@ Offering a confirmed order to drivers and resolving the race when several accept
 ```mermaid
 sequenceDiagram
     participant D as Dispatcher
-    participant IG as Inngest
+    participant App as Next.js
     participant DB as Postgres
     participant TW as Twilio
     participant Dr as Drivers
 
     D->>DB: transition to driver_requested
-    D->>IG: send dispatch/broadcast
-    IG->>DB: select eligible drivers
-    IG->>DB: insert job_offers (one per driver, status=offered)
-    IG->>TW: SMS to each driver
+    App->>TW: job_broadcast SMS to each active driver
     TW-->>Dr: "Job available — tap to view"
-    IG->>IG: step.sleep(offer_ttl)
 
-    Note over Dr,DB: drivers open the app and tap Accept
+    Note over Dr,DB: drivers open the board and tap Accept
 
-    Dr->>DB: accept_job_offer(offer_id, driver_id)
+    Dr->>DB: transitionOrder(-> driver_assigned)
     DB->>DB: atomic claim (see below)
     DB-->>Dr: success to exactly one caller
-    Dr->>DB: transitionOrder(-> driver_assigned)
-    Dr->>TW: job_assigned SMS to winner
-    IG->>DB: on wake: withdraw any still-open offers
+    App->>TW: job_assigned SMS to the winner
+
+    Note over DB,App: a cron sweep flags postings older than the TTL
 ```
+
+---
+
+## Postings, not offers
+
+A `driver_requested` order **is** the posting. Every active driver sees every open posting on the job board; there is no per-driver offer row and no per-driver offer status.
+
+This is a deliberate simplification for the MVP's scale (a handful of companies, a few drivers):
+
+- The board is a query over `orders` in `driver_requested`, not a table of offers.
+- The only dispatch state that matters — who has the job — lives in one place: `orders.assigned_driver_id`.
+- The one per-driver fact worth keeping is a decline, recorded as a plain row ([below](#declines)) rather than as a status.
+
+If targeted dispatch (per-driver offers, geographic or vehicle filtering) is ever needed, it can be added then. Nothing about `orders` changes.
 
 ---
 
 ## Eligibility
 
-A driver is offered a job when all hold:
+A driver is alerted about a posting when all hold:
 
-| Condition | Source |
-|---|---|
-| `profiles.role = 'driver'` | |
-| `profiles.active = true` | |
-| Has a phone number | Required for SMS; a driver with no phone still sees the in-app board but gets no alert |
+| Condition                  | Source                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------- |
+| `profiles.role = 'driver'` |                                                                                 |
+| `profiles.active = true`   |                                                                                 |
+| Has a phone number         | Required for SMS; a driver with no phone still sees the board but gets no alert |
 
 The MVP has a single market (Greenville/Spartanburg, SC), so there is no geographic filtering. When a second market is added, an eligibility predicate on `retailer_stores` location is the natural extension point.
 
 ---
 
-## Offers
-
-One `job_offers` row per eligible driver, created in a single batch, all with `status = 'offered'` and a shared `expires_at`.
-
-The broadcast is **fan-out, not assignment**: we do not pick a driver, we make the job visible and let the first qualified driver claim it. This matches the existing Slack behaviour (`I'll take it` in a thread) while removing the dispatcher from the loop.
-
----
-
 ## First-accept-wins
 
-This is the only genuine concurrency hazard in the system, and it must be solved in the database.
+This is the only genuine concurrency hazard in the system, and it is settled by the state transition itself.
 
-Two drivers tapping Accept within the same few hundred milliseconds is not an edge case — it is the expected behaviour of a broadcast. If the check is done in application code (`SELECT` then `UPDATE`), both callers read `offered`, both proceed, and the order ends up with two assigned drivers, one of whom drives to a store for nothing.
+Acceptance is the `driver_requested → driver_assigned` transition. `transitionOrder()` already loads the order `FOR UPDATE` and re-checks the current status inside the transaction, so two concurrent accepts serialise on the order row: the second reads `driver_assigned`, finds no legal transition, and is rejected with a clean "already taken" message. There is no second write path and no separate claim function.
 
-### Two layers of defence
-
-**Layer 1 — a partial unique index** makes the bad state unrepresentable:
+Equivalently, the whole claim is one conditional statement:
 
 ```sql
-create unique index job_offers_one_accepted_per_order
-  on job_offers (order_id)
-  where status = 'accepted';
+update orders
+   set assigned_driver_id = $driver, status = 'driver_assigned', updated_at = now()
+ where id = $order
+   and status = 'driver_requested'
+   and assigned_driver_id is null
+returning id;
 ```
 
-Even if application logic were wrong, the second concurrent `UPDATE` to `accepted` fails at the constraint.
+Postgres re-evaluates the predicate after the row lock is released, so the loser matches zero rows. Application-level checks (`SELECT` then `UPDATE`) are not sufficient — the guard lives in the transition.
 
-**Layer 2 — an atomic claim function** turns the race into a queue:
+The `driver_requested → driver_assigned` transition is the **only** writer of `orders.assigned_driver_id`.
 
-```sql
-create or replace function accept_job_offer(p_offer_id uuid, p_driver_id uuid)
-returns table (success boolean, order_id uuid, reason text)
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare
-  v_order_id uuid;
-  v_status   job_offer_status;
-begin
-  -- Lock this driver's offer.
-  select order_id, status
-    into v_order_id, v_status
-    from job_offers
-   where id = p_offer_id
-     and driver_id = p_driver_id
-     for update;
-
-  if not found then
-    return query select false, null::uuid, 'offer_not_found';
-    return;
-  end if;
-
-  if v_status <> 'offered' then
-    return query select false, v_order_id, 'offer_no_longer_open';
-    return;
-  end if;
-
-  -- Serialise on the order itself: concurrent accepts queue here.
-  perform 1 from orders where id = v_order_id for update;
-
-  if exists (
-    select 1 from job_offers
-     where order_id = v_order_id and status = 'accepted'
-  ) then
-    return query select false, v_order_id, 'already_assigned';
-    return;
-  end if;
-
-  update job_offers
-     set status = 'accepted', responded_at = now()
-   where id = p_offer_id;
-
-  update job_offers
-     set status = 'withdrawn', responded_at = now()
-   where order_id = v_order_id
-     and id <> p_offer_id
-     and status = 'offered';
-
-  update orders
-     set assigned_driver_id = p_driver_id, updated_at = now()
-   where id = v_order_id;
-
-  return query select true, v_order_id, null::text;
-end;
-$$;
-```
-
-Locking the **order** row is what serialises the race: the first caller holds it through commit, so the second sees `already_assigned` and is rejected cleanly rather than failing on a constraint violation.
-
-### Division of responsibility
-
-`accept_job_offer()` owns *the claim* — it is the concurrency gate. `transitionOrder()` owns *the state machine* — it is called immediately afterwards with `→ driver_assigned`.
-
-They stay separate because they answer different questions: "who won?" versus "is this transition legal and who may make it?". The transition's guard is "an accepted offer exists for this order", which is now uniquely true for exactly one driver, so only the winner's call can succeed.
-
-`accept_job_offer` is `security definer` and is the only function that writes `job_offers.status` and `orders.assigned_driver_id` directly.
+Guard: the caller is a driver, the order is `driver_requested`, and no driver is assigned. A retried Accept from the winner (double-tap, network retry) is treated as success rather than an error.
 
 ---
 
-## Offer expiry
+## Declines
 
-An Inngest `step.sleep` holds the workflow open for the offer TTL. On wake it:
+A driver who cannot take a posting taps **Decline**, which inserts one row:
 
-- withdraws any offers still `offered`, and
-- if nothing was accepted, leaves the order in `driver_requested` and notifies the dispatcher.
+```
+job_declines
+  id, order_id FK, driver_id FK, reason text null, created_at
+  UNIQUE (order_id, driver_id)
+```
+
+- A decline does not change the order's status and does not affect other drivers.
+- The dispatcher is notified of each decline and sees who declined on the order.
+- The posting disappears from that driver's board — `get_open_jobs_for_driver()` excludes orders the caller has declined.
+- When every active driver has declined, the order is flagged **nobody available** in the console. That is the escalation signal: a human needs to widen the pool or call around.
+
+A decline has no concurrency hazard — the insert is idempotent via the unique constraint.
+
+---
+
+## Broadcast expiry
+
+A cron sweep runs every few minutes and looks for orders still `driver_requested` past the broadcast TTL. It notifies the dispatcher once per order — through the notification outbox, so `dedupe_key` prevents repeats — including who has declined.
 
 The dispatcher can then re-broadcast (transition `driver_requested → customer_confirmed → driver_requested`) or widen the pool. The MVP does **not** auto-rebroadcast — an unfilled order is a signal a human should see.
 
 ---
 
-## Decline and withdrawal
+## Withdrawal and reassignment
 
-| Action | Effect |
-|---|---|
-| Driver declines | Their offer → `declined`. The order stays `driver_requested`; other offers unaffected |
-| Dispatcher withdraws | All open offers → `withdrawn`; order returns to `customer_confirmed` |
-| Order cancelled | All open offers → `withdrawn` |
+| Action                             | Effect                                                                                          |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Driver declines                    | A `job_declines` row. The order stays `driver_requested`; other drivers are unaffected          |
+| Dispatcher withdraws the broadcast | Order returns to `customer_confirmed`; the posting leaves every board                           |
+| Order cancelled                    | The posting leaves every board                                                                  |
+| Assigned driver falls through      | Dispatcher clears the assignment, returns the order to `customer_confirmed`, then re-broadcasts |
 
-A decline is deliberately **not** broadcast to the dispatcher as an alert. Ten drivers declining a job is noise; zero drivers accepting is signal, and the expiry path already surfaces that.
-
----
-
-## Reassignment
-
-If an assigned driver becomes unavailable after accepting, the dispatcher withdraws the assignment and returns the order to `customer_confirmed`, then re-broadcasts. The original offer stays `accepted` in the audit trail but the order's `assigned_driver_id` is cleared.
-
-There is no driver-initiated release in the MVP. A driver who cannot complete a job contacts the dispatcher, which keeps a human in the loop for the case that most affects a customer.
+Every one of these is recorded in `order_status_events`. There is no separate offer record to reconcile.
 
 ---
 
 ## What is out of scope
 
 - Automatic re-broadcast on expiry
+- Targeted or filtered dispatch (per-driver offers)
 - Driver ratings or reliability scoring affecting eligibility
 - Distance-based or vehicle-capacity matching
 - Scheduled or batched dispatch

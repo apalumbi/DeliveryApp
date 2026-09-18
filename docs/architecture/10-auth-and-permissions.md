@@ -10,13 +10,13 @@ Identity, route guards, and the Row Level Security policies that enforce access.
 
 Supabase Auth with **email as the username and a password**. No magic links, no SSO.
 
-| Aspect | Decision |
-|---|---|
-| Identifier | Email address |
-| Credential | Password (Supabase-managed, bcrypt) |
-| Sessions | Supabase JWT in an HTTP-only cookie, refreshed by middleware |
-| MFA | Out of scope for MVP |
-| Self-signup | **Disabled.** All accounts are created by a dispatcher |
+| Aspect      | Decision                                                     |
+| ----------- | ------------------------------------------------------------ |
+| Identifier  | Email address                                                |
+| Credential  | Password (Supabase-managed, bcrypt)                          |
+| Sessions    | Supabase JWT in an HTTP-only cookie, refreshed by middleware |
+| MFA         | Out of scope for MVP                                         |
+| Self-signup | **Disabled.** All accounts are created by a dispatcher       |
 
 Self-signup is disabled because every user belongs to a company or the dispatch team. An uninvited account has no valid `profiles` row and would be unable to do anything — better to not create it at all.
 
@@ -28,11 +28,11 @@ See [ADR-0007](../adr/0007-email-password-auth.md).
 
 `profiles.role` is the single authority. It is **never** read from a client-supplied value.
 
-| Role | Scope | Bound to |
-|---|---|---|
-| `dispatcher` | All data | Nothing |
-| `driver` | Own offers and assigned jobs | — |
-| `customer` | Own company's data | `company_id` |
+| Role         | Scope                          | Bound to     |
+| ------------ | ------------------------------ | ------------ |
+| `dispatcher` | All data                       | Nothing      |
+| `driver`     | Own declines and assigned jobs | —            |
+| `customer`   | Own company's data             | `company_id` |
 
 A fourth concept — **admin** — is not a role. Dispatchers hold administrative permissions, so there is no separate admin account to manage in the MVP.
 
@@ -40,13 +40,13 @@ A fourth concept — **admin** — is not a role. Dispatchers hold administrativ
 
 ## Route guards
 
-| Route group | Required role | Behaviour on failure |
-|---|---|---|
-| `/dispatch/*` | `dispatcher` | Redirect to `/login` |
-| `/driver/*` | `driver` | Redirect to `/login` |
-| `/portal/*` | `customer` | Redirect to `/login` |
-| `/login` | none | — |
-| `/api/webhooks/*` | none — signature-verified | `400` / `406` |
+| Route group       | Required role             | Behaviour on failure |
+| ----------------- | ------------------------- | -------------------- |
+| `/dispatch/*`     | `dispatcher`              | Redirect to `/login` |
+| `/driver/*`       | `driver`                  | Redirect to `/login` |
+| `/portal/*`       | `customer`                | Redirect to `/login` |
+| `/login`          | none                      | —                    |
+| `/api/webhooks/*` | none — signature-verified | `400` / `406`        |
 
 Route guards are a **UX affordance, not a security boundary**. They stop a driver from seeing a dispatcher page; they do not protect data. RLS does that, and it holds even if a guard is bypassed or a route is added without one.
 
@@ -73,11 +73,11 @@ sequenceDiagram
     App->>D: show alias + credentials for handoff
 ```
 
-| Role | Provisioning |
-|---|---|
-| `customer` | Dispatcher creates the company, then one portal login. Credentials are handed over out-of-band in the MVP |
-| `driver` | Dispatcher creates the account; driver can change their password after first login |
-| `dispatcher` | Created manually via the Supabase dashboard. There is no in-app path to create a dispatcher |
+| Role         | Provisioning                                                                                              |
+| ------------ | --------------------------------------------------------------------------------------------------------- |
+| `customer`   | Dispatcher creates the company, then one portal login. Credentials are handed over out-of-band in the MVP |
+| `driver`     | Dispatcher creates the account; driver can change their password after first login                        |
+| `dispatcher` | Created manually via the Supabase dashboard. There is no in-app path to create a dispatcher               |
 
 The absence of an in-app dispatcher-creation path is deliberate: it is the one account type that can see everything, and it should require direct database access to create.
 
@@ -152,27 +152,28 @@ create policy orders_driver on orders for select using (
 );
 ```
 
-**Drivers deliberately cannot select `orders` for jobs they have merely been offered.** A job offer must show the store and the items — a driver deciding whether to accept needs to know what they're hauling — but must **not** reveal the customer's address, contact, or instructions before they commit.
+**Drivers deliberately cannot select `orders` for postings they have not accepted.** A posting must show the store and the item count — a driver deciding whether to accept needs to know what they're taking on — but must **not** reveal the customer's address, contact, or instructions before they commit.
 
 That is served by a redacted read path instead:
 
 ```sql
 create or replace function public.get_open_jobs_for_driver()
 returns table (
-  offer_id uuid, order_id uuid, order_number text, retailer retailer,
-  store_name text, store_address text, item_count int, offered_at timestamptz
+  order_id uuid, order_number text, retailer retailer,
+  store_name text, store_address text, item_count int, posted_at timestamptz
 )
 language sql security definer stable set search_path = public as $$
-  select o.id, ord.id, ord.order_number, ord.retailer,
-         s.name, s.address_line1, count(i.id), o.offered_at
-    from job_offers o
-    join orders ord on ord.id = o.order_id
+  select ord.id, ord.order_number, ord.retailer,
+         s.name, s.address_line1, count(i.id), ord.updated_at
+    from orders ord
     left join retailer_stores s on s.id = ord.retailer_store_id
     left join order_items i on i.order_id = ord.id
-   where o.driver_id = auth.uid()
-     and o.status = 'offered'
-     and ord.status = 'driver_requested'
-   group by o.id, ord.id, s.name, s.address_line1, o.offered_at
+   where ord.status = 'driver_requested'
+     and not exists (
+       select 1 from job_declines d
+        where d.order_id = ord.id and d.driver_id = auth.uid()
+     )
+   group by ord.id, s.name, s.address_line1
 $$;
 ```
 
@@ -190,15 +191,18 @@ create policy order_items_read on order_items for select using (
 
 The subquery is itself subject to the `orders` policies, so visibility composes correctly for all three roles without restating the rules.
 
-### Job offers
+### Job declines
 
 ```sql
-create policy job_offers_driver_read on job_offers for select using (
+create policy job_declines_driver_insert on job_declines for insert
+  with check (driver_id = auth.uid());
+
+create policy job_declines_read on job_declines for select using (
   driver_id = auth.uid() or is_dispatcher()
 );
 ```
 
-Drivers have **no insert or update policy** on `job_offers`. Acceptance goes exclusively through `accept_job_offer()`, which is `security definer`. A driver cannot fabricate an acceptance by writing the row directly.
+Drivers may insert and read only their own declines. Acceptance is not writable at all: it is the `driver_requested → driver_assigned` transition, and drivers hold no write policy on `orders`, so an assignment cannot be fabricated by writing rows directly.
 
 ### Notifications, payments, inbound email
 
@@ -228,11 +232,11 @@ create policy inbound_emails_dispatcher on inbound_emails for all
 
 The service role key bypasses RLS entirely. It appears in exactly three places:
 
-| Location | Why |
-|---|---|
-| Webhook route handlers (Mailgun, Stripe) | No user context exists; the caller is a provider |
-| Inngest workflow steps | Background work runs with no session |
-| Admin actions in the dispatcher console (creating users) | The Supabase admin API requires it |
+| Location                                                 | Why                                                                      |
+| -------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Webhook route handlers (Mailgun, Stripe)                 | No user context exists; the caller is a provider                         |
+| Cron sweep routes (`/api/cron/*`)                        | Scheduled work runs with no session; protected by a shared-secret header |
+| Admin actions in the dispatcher console (creating users) | The Supabase admin API requires it                                       |
 
 Rules that keep this safe:
 
@@ -246,35 +250,36 @@ The risk is concrete: a server action that uses the service role and forgets to 
 
 ## Permission matrix
 
-| Action | Dispatcher | Driver | Customer |
-|---|---|---|---|
-| View all orders | ✓ | | |
-| View own company's orders | | | ✓ |
-| View assigned job | ✓ | ✓ | |
-| View an offered (unaccepted) job | ✓ | ✓ redacted | |
-| See delivery address | ✓ | after assignment | own orders |
-| Edit order items | ✓ | | |
-| Set retailer store | ✓ | | |
-| Set fees | ✓ | | |
-| Complete checkout on customer's behalf | ✓ | | |
-| Complete own checkout | | | ✓ |
-| Broadcast to drivers | ✓ | | |
-| Accept a job | | ✓ | |
-| Advance delivery status | ✓ | ✓ assigned only | |
-| Upload evidence | ✓ | ✓ assigned only | |
-| Send payment request | ✓ | | |
-| Create companies, users, stores | ✓ | | |
-| Read inbound email | ✓ | | |
+| Action                                 | Dispatcher | Driver           | Customer   |
+| -------------------------------------- | ---------- | ---------------- | ---------- |
+| View all orders                        | ✓          |                  |            |
+| View own company's orders              |            |                  | ✓          |
+| View assigned job                      | ✓          | ✓                |            |
+| View an open posting (unaccepted)      | ✓          | ✓ redacted       |            |
+| See delivery address                   | ✓          | after assignment | own orders |
+| Edit order items                       | ✓          |                  |            |
+| Set retailer store                     | ✓          |                  |            |
+| Set fees                               | ✓          |                  |            |
+| Complete checkout on customer's behalf | ✓          |                  |            |
+| Complete own checkout                  |            |                  | ✓          |
+| Broadcast to drivers                   | ✓          |                  |            |
+| Accept a job                           |            | ✓                |            |
+| Decline a posting                      |            | ✓                |            |
+| Advance delivery status                | ✓          | ✓ assigned only  |            |
+| Upload evidence                        | ✓          | ✓ assigned only  |            |
+| Send payment request                   | ✓          |                  |            |
+| Create companies, users, stores        | ✓          |                  |            |
+| Read inbound email                     | ✓          |                  |            |
 
 ---
 
 ## Session and password handling
 
-| Concern | Approach |
-|---|---|
-| Session storage | HTTP-only, `Secure`, `SameSite=Lax` cookie set by Supabase |
-| Refresh | Middleware refreshes on navigation |
-| Password reset | Supabase's email reset flow, using Mailgun as the SMTP provider |
-| Password policy | Minimum length enforced by Supabase; no forced rotation |
+| Concern              | Approach                                                                                                                                       |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Session storage      | HTTP-only, `Secure`, `SameSite=Lax` cookie set by Supabase                                                                                     |
+| Refresh              | Middleware refreshes on navigation                                                                                                             |
+| Password reset       | Supabase's email reset flow, using Mailgun as the SMTP provider                                                                                |
+| Password policy      | Minimum length enforced by Supabase; no forced rotation                                                                                        |
 | Account deactivation | `profiles.active = false` — the helper functions all check it, so a deactivated user loses access immediately while their history is preserved |
-| Deleted users | Never deleted. `active = false` preserves order history and audit integrity |
+| Deleted users        | Never deleted. `active = false` preserves order history and audit integrity                                                                    |
