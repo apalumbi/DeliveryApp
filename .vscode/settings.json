@@ -10,6 +10,9 @@
   },
   // Tailwind v4 has no JS config file — point IntelliSense at the CSS entry point.
   "tailwindCSS.experimental.configFile": "web/app/globals.css",
+  // Teach the CSS language service Tailwind v4's at-rules (@theme, @utility, …)
+  // so it stops flagging them as "Unknown at rule".
+  "css.customData": ["./.vscode/css-custom-data.json"],
   // Containment: do not forward the host SSH agent into the dev container.
   // Defaults to true; the agent could otherwise use your keys to authenticate
   // anywhere they work.

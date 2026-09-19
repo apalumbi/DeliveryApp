@@ -1,0 +1,43 @@
+import { cva, type VariantProps } from "class-variance-authority";
+import type { ComponentProps } from "react";
+
+import { cn } from "@/lib/utils";
+
+export type ButtonIntent = "primary" | "secondary" | "ghost";
+export type ButtonSize = "sm" | "md";
+
+export const button = cva(
+  "inline-flex cursor-pointer items-center justify-center gap-1.5 font-medium transition-colors disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      intent: {
+        primary: "bg-accent text-accent-ink hover:bg-accent-hover",
+        secondary: "border border-hairline bg-card text-ink hover:bg-card-muted",
+        ghost: "text-ink-muted hover:bg-sunken hover:text-ink",
+      } satisfies Record<ButtonIntent, string>,
+      size: {
+        sm: "rounded-control px-2.5 py-1.5 text-[11.5px]",
+        md: "rounded-control px-4 py-2.5 text-[13px]",
+      } satisfies Record<ButtonSize, string>,
+    },
+    defaultVariants: { intent: "primary", size: "sm" },
+  },
+);
+
+type ButtonProps = ComponentProps<"button"> & VariantProps<typeof button>;
+
+export function Button({
+  className,
+  intent,
+  size,
+  type = "button",
+  ...props
+}: ButtonProps) {
+  return (
+    <button
+      type={type}
+      className={cn(button({ intent, size }), className)}
+      {...props}
+    />
+  );
+}

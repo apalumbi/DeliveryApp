@@ -1,0 +1,95 @@
+{
+  "version": 1.1,
+  "atDirectives": [
+    {
+      "name": "@theme",
+      "description": "Tailwind CSS: define theme variables (design tokens) and the utilities generated from them. Accepts `inline` (use the referenced variable in utilities) and `static` (emit every variable, used or not).",
+      "references": [
+        {
+          "name": "Tailwind CSS — Theme variables",
+          "url": "https://tailwindcss.com/docs/theme"
+        }
+      ]
+    },
+    {
+      "name": "@source",
+      "description": "Tailwind CSS: add source files or directories to scan for class names.",
+      "references": [
+        {
+          "name": "Tailwind CSS — Detecting classes",
+          "url": "https://tailwindcss.com/docs/detecting-classes-in-source-files"
+        }
+      ]
+    },
+    {
+      "name": "@utility",
+      "description": "Tailwind CSS: define a custom utility class.",
+      "references": [
+        {
+          "name": "Tailwind CSS — Adding custom styles",
+          "url": "https://tailwindcss.com/docs/adding-custom-styles"
+        }
+      ]
+    },
+    {
+      "name": "@variant",
+      "description": "Tailwind CSS: apply a variant (e.g. hover, dark) inside custom CSS.",
+      "references": [
+        {
+          "name": "Tailwind CSS — Using variants",
+          "url": "https://tailwindcss.com/docs/adding-custom-styles#using-variants"
+        }
+      ]
+    },
+    {
+      "name": "@custom-variant",
+      "description": "Tailwind CSS: register a custom variant.",
+      "references": [
+        {
+          "name": "Tailwind CSS — Adding custom variants",
+          "url": "https://tailwindcss.com/docs/adding-custom-styles#adding-custom-variants"
+        }
+      ]
+    },
+    {
+      "name": "@apply",
+      "description": "Tailwind CSS: inline existing utility classes into custom CSS.",
+      "references": [
+        {
+          "name": "Tailwind CSS — @apply",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#apply-directive"
+        }
+      ]
+    },
+    {
+      "name": "@plugin",
+      "description": "Tailwind CSS: load a legacy JavaScript plugin.",
+      "references": [
+        {
+          "name": "Tailwind CSS — @plugin",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#plugin-directive"
+        }
+      ]
+    },
+    {
+      "name": "@config",
+      "description": "Tailwind CSS: load a legacy JavaScript config file.",
+      "references": [
+        {
+          "name": "Tailwind CSS — @config",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#config-directive"
+        }
+      ]
+    },
+    {
+      "name": "@reference",
+      "description": "Tailwind CSS: import theme variables without emitting their utilities.",
+      "references": [
+        {
+          "name": "Tailwind CSS — @reference",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#reference-directive"
+        }
+      ]
+    }
+  ]
+}
