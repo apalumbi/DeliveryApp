@@ -9,7 +9,7 @@ Environments, configuration, prerequisites, and the release process.
 ## Environments
 
 |                  | Local                         | Preview / Staging         | Production                   |
-|----------------|-----------------------------|-------------------------|----------------------------|
+| ---------------- | ----------------------------- | ------------------------- | ---------------------------- |
 | App              | `next dev`                    | Vercel preview deploy     | Vercel production            |
 | Database         | Supabase CLI (local Postgres) | Staging Supabase project  | Production Supabase project  |
 | Inbound email    | Mailgun sandbox subdomain     | `orders.staging.<domain>` | `orders.<domain>`            |
@@ -30,24 +30,24 @@ A separate subdomain is the only clean isolation. It is a prerequisite, not an o
 
 Everything here is Phase 1 work. Items marked **blocking** prevent Phase 2 from starting.
 
-| #  | Item                                          | Owner | Notes                                        |
-|--|---------------------------------------------|-----|--------------------------------------------|
-| 1  | **Domain purchased** — blocking               |       | e.g. `quickconstruction.example`             |
-| 2  | **Mailgun account** — blocking                |       |                                              |
-| 3  | MX records for `orders.<domain>` → Mailgun    |       |                                              |
-| 4  | SPF + DKIM records for sending                |       | Deliverability                               |
-| 5  | Staging subdomain `orders.staging.<domain>`   |       | Environment isolation                        |
-| 6  | Mailgun inbound routes (both domains)         |       | `store()` + `forward()`                      |
-| 7  | Mailgun signing key into app config           |       | Webhook verification                         |
-| 8  | **Supabase production project** (`us-east-1`) |       | Exists — needs project created               |
-| 9  | Supabase staging project                      |       |                                              |
-| 10 | **Vercel project**                            |       | Exists — needs linking                       |
-| 11 | **Stripe account**                            |       |                                              |
-| 12 | Stripe webhook endpoints (per environment)    |       |                                              |
-| 13 | **Twilio account** + sender number            |       | A2P registration may take days — start early |
-| 14 | Vercel Cron schedule configured               |       | Notifications outbox + broadcast expiry      |
-| 15 | LLM provider API key                          |       | Parse fallback                               |
-| 16 | Upstate SC store list seeded                  |       | Dispatcher picks from this                   |
+| #   | Item                                          | Owner | Notes                                        |
+| --- | --------------------------------------------- | ----- | -------------------------------------------- |
+| 1   | **Domain purchased** — blocking               |       | e.g. `quickconstruction.example`             |
+| 2   | **Mailgun account** — blocking                |       |                                              |
+| 3   | MX records for `orders.<domain>` → Mailgun    |       |                                              |
+| 4   | SPF + DKIM records for sending                |       | Deliverability                               |
+| 5   | Staging subdomain `orders.staging.<domain>`   |       | Environment isolation                        |
+| 6   | Mailgun inbound routes (both domains)         |       | `store()` + `forward()`                      |
+| 7   | Mailgun signing key into app config           |       | Webhook verification                         |
+| 8   | **Supabase production project** (`us-east-1`) |       | Exists — needs project created               |
+| 9   | Supabase staging project                      |       |                                              |
+| 10  | **Vercel project**                            |       | Exists — needs linking                       |
+| 11  | **Stripe account**                            |       |                                              |
+| 12  | Stripe webhook endpoints (per environment)    |       |                                              |
+| 13  | **Twilio account** + sender number            |       | A2P registration may take days — start early |
+| 14  | Vercel Cron schedule configured               |       | Notifications outbox + broadcast expiry      |
+| 15  | LLM provider API key                          |       | Parse fallback                               |
+| 16  | Upstate SC store list seeded                  |       | Dispatcher picks from this                   |
 
 Item 13 deserves emphasis: US A2P 10DLC registration is not instant. Starting it late blocks driver SMS, which blocks dispatch.
 
@@ -117,7 +117,7 @@ Migrations are written forward-only. Additive changes (new nullable columns, new
 ```bash
 supabase start          # local Postgres + Auth + Storage
 supabase db reset       # apply migrations + seed
-npm run dev             # Next.js
+bun run dev             # Next.js
 # cron sweeps: curl -H "Authorization: Bearer $CRON_SECRET" localhost:3000/api/cron/drain-notifications
 ```
 
@@ -146,7 +146,7 @@ The smoke test in step G is not optional. The single highest-risk path in the sy
 ## Monitoring
 
 | Concern             | Mechanism                                                                       |
-|-------------------|-------------------------------------------------------------------------------|
+| ------------------- | ------------------------------------------------------------------------------- |
 | Cron sweep failures | Logged; failed sweeps surface in the dispatcher system-health panel             |
 | Parse drift         | Reconciliation failure rate on `parse_attempts`, surfaced in the console        |
 | Email failures      | `notifications.status` in (`failed`, `bounced`)                                 |

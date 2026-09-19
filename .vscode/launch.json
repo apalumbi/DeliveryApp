@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Next.js: server-side (bun runtime)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "bun run dev",
+      "cwd": "${workspaceFolder}/web"
+    },
+    {
+      // Bun's runtime has a partial inspector. If server breakpoints misbehave,
+      // this runs the same dev server on Node instead.
+      "name": "Next.js: server-side (Node, for debugging)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "node ./node_modules/next/dist/bin/next dev",
+      "cwd": "${workspaceFolder}/web"
+    },
+    {
+      "name": "Next.js: client-side (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/web"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Next.js: full stack",
+      "configurations": [
+        "Next.js: server-side (bun runtime)",
+        "Next.js: client-side (Chrome)"
+      ],
+      "stopAll": true
+    }
+  ]
+}

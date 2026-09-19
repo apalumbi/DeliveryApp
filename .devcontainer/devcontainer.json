@@ -1,0 +1,48 @@
+{
+  "name": "Delivery App",
+  "build": { "dockerfile": "Dockerfile" },
+
+  // Non-root user. The Dev Containers feature realigns its UID to the host user,
+  // so bind-mounted source stays writable on Linux and macOS alike.
+  "remoteUser": "node",
+  "workspaceFolder": "/workspaces/DeliveryApp",
+
+  // Source is bind-mounted by default. These three paths get named volumes
+  // instead: writes to them are hot, and on macOS bind mounts are slow.
+  "mounts": [
+    "source=deliveryapp-web-node_modules,target=/workspaces/DeliveryApp/web/node_modules,type=volume",
+    "source=deliveryapp-web-next,target=/workspaces/DeliveryApp/web/.next,type=volume",
+    "source=deliveryapp-bun-cache,target=/home/node/.bun/install/cache,type=volume"
+  ],
+
+  // Containment option: block ALL outbound network from the container.
+  // Not enabled: it breaks `bun install` and the AI agent's model calls.
+  // Only usable if dependencies are baked into the image at build time.
+  // "runArgs": ["--network=none"],
+
+  // Docker creates named-volume mount points owned by root. Fix ownership first,
+  // then install. Requires the committed bun.lock.
+  "postCreateCommand": "sudo chown -R node:node /workspaces/DeliveryApp/web/node_modules /workspaces/DeliveryApp/web/.next /home/node/.bun/install/cache && cd /workspaces/DeliveryApp/web && bun install --frozen-lockfile",
+
+  // Portable containment: plain VS Code has no SSH-agent toggle, so clear the
+  // variable it would otherwise use. Not a hard guarantee — the Devin Desktop
+  // setting in .vscode/settings.json is the confirmed control.
+  "remoteEnv": { "SSH_AUTH_SOCK": "" },
+  // Belt-and-braces if the above proves insufficient (race-prone; not enabled):
+  // "postStartCommand": "rm -f /tmp/vscode-ssh-auth-*.sock || true",
+
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": { "label": "Next.js dev server", "onAutoForward": "notify" }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
+      ]
+    }
+  }
+}

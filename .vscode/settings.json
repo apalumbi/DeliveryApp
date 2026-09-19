@@ -1,0 +1,17 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // docs/ is hand-written markdown (mermaid-heavy) — keep Prettier out of it.
+  "[markdown]": {
+    "editor.formatOnSave": false
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  // Tailwind v4 has no JS config file — point IntelliSense at the CSS entry point.
+  "tailwindCSS.experimental.configFile": "web/app/globals.css",
+  // Containment: do not forward the host SSH agent into the dev container.
+  // Defaults to true; the agent could otherwise use your keys to authenticate
+  // anywhere they work.
+  "remote.devinDevContainers.enableSSHAgentForwarding": false
+}

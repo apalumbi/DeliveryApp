@@ -1,0 +1,5 @@
+[install]
+# Refuse package versions published less than 7 days ago — the window where most
+# supply-chain attacks are caught and yanked. Unit: SECONDS. 7 days = 604800.
+# Set to 0 to disable.
+minimumReleaseAge = 604800
