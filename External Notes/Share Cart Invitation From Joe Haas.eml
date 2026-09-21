@@ -1,0 +1,2724 @@
+Delivered-To: joe.haas@locksmithconsulting.com
+Received: by 2002:ac8:75cb:0:b0:52f:9fdb:7220 with SMTP id z11csp10546016qtq;
+        Sat, 19 Sep 2026 18:51:51 -0700 (PDT)
+X-Received: by 2002:a05:6870:b3c9:b0:465:8554:94b7 with SMTP id 586e51a60fabf-486e585a33cmr6979189fac.12.1789869111301;
+        Sat, 19 Sep 2026 18:51:51 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789869111; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Fp7eUFA2ndWyzeKTg4X5HSPsgNLSZ98im/WMKJMr4MAivtk4GukPsnXHgOAf7dHs3c
+         HsYDLzi9+FAtgJckbwfDPtt2o2l67UOm61785h1P44eMzuSGsdf5uvhXQFL3Y37B1CwH
+         bAnBCQ2qaXUn2nMX6DpKgroTEpACqPnMwjD/EmUl+8JhM9xyI160D2oTZVpmiM2riTR6
+         Rld5qZSESp6LG+HBTZv7/pc53edo7DQsN5FPJp9aPNHSbp2SSNROeNXZkkBA0TUJDISn
+         0uicWl2zz264u60lnMdNN7IHRXrRCBmcVpRDS9vgH+aX16GUwlJt273rWxKR559p3JBt
+         BS9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=to:subject:message-id:mime-version:from:date
+         :content-transfer-encoding:dkim-signature;
+        bh=qPLvZ8x+F+jIJsikBleTfgy32CiNUobyXWoUNpidCXE=;
+        fh=F87Y46wMzYWtgYOL1TSZsBQQuHB1w+xsIbwWyXpbqBI=;
+        b=MiIQH8X4L0OZpUlgQ83ze57Nhf+h1eXZHQVJxje2HHlw9kxW08snHfI9HnapQ7poBT
+         3OnSUIBgBoyXR8+90iAd3bGoF4m9fQajX9cpOfCOBu2UrOw9vhX1ki9eWpA/1iR2nCpI
+         Mod2frrA1LtIzTOsGwUznkdmeBo2qlCJsDn7RlYReflh498hcGC8s1FKrcXxVcbIm1Wl
+         /4aJqTeSqbi7GV7v/YvyiUjODX2m8ksvLrq8o2ul+UTk15lYY1r9swyJa9ZkVVxI9UEQ
+         ysdvskGBD1ngxokXobYcrQtI8xSzqolu1Cc4H3NKP3ab0PuuFUy9Iz9+X6DxbNBHjNf0
+         bSGQ==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@order.homedepot.com header.s=s1 header.b=AEyFY6lw;
+       spf=pass (google.com: domain of bounces+8342805-5135-joe.haas=locksmithconsulting.com@sg.order.homedepot.com designates 168.245.63.133 as permitted sender) smtp.mailfrom="bounces+8342805-5135-joe.haas=locksmithconsulting.com@sg.order.homedepot.com";
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=order.homedepot.com
+Return-Path: <bounces+8342805-5135-joe.haas=locksmithconsulting.com@sg.order.homedepot.com>
+Received: from o2.sg.order.homedepot.com (o2.sg.order.homedepot.com. [168.245.63.133])
+        by mx.google.com with ESMTPS id 586e51a60fabf-48821889b38si4897144fac.119.2026.09.19.18.51.50
+        for <joe.haas@locksmithconsulting.com>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 19 Sep 2026 18:51:51 -0700 (PDT)
+Received-SPF: pass (google.com: domain of bounces+8342805-5135-joe.haas=locksmithconsulting.com@sg.order.homedepot.com designates 168.245.63.133 as permitted sender) client-ip=168.245.63.133;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@order.homedepot.com header.s=s1 header.b=AEyFY6lw;
+       spf=pass (google.com: domain of bounces+8342805-5135-joe.haas=locksmithconsulting.com@sg.order.homedepot.com designates 168.245.63.133 as permitted sender) smtp.mailfrom="bounces+8342805-5135-joe.haas=locksmithconsulting.com@sg.order.homedepot.com";
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=order.homedepot.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=order.homedepot.com;
+	h=content-transfer-encoding:content-type:date:from:mime-version:subject:
+	to:cc:content-type:date:from:subject:to;
+	s=s1; t=1789869110;
+	bh=qPLvZ8x+F+jIJsikBleTfgy32CiNUobyXWoUNpidCXE=;
+	b=AEyFY6lw2rfdbHvhFDNCKKEuSUTptOFwdsk7YV7WQPIE1hDiNcx9TArknoeec+ZlX4Yu
+	2QI+1tiQ3If5GRHadnD/46yJiTMGlXCs1ItBILElbGT5rybKwaXlwadZQE3lMblydCpBT/
+	+E1/ijbNMrwafvHKlplwtee51ZZNc0EqrzGHezfASUt4qT45zqvxL4YYCBxdCn9kylBwAJ
+	RRx4k0i9cQvGL+q29bFbVEIbn/uPS3CtWxP2bzgSzdnw5ig1AKE+AfQyOxOAsLXwKJF9B6
+	VG0a6loPJVRtdk12WGVT+miF529+otVTEwckP3PoEfWJNcz0XKBSbW8vs0SVWsVA==
+Received: by recvd-86697db757-66g4l with SMTP id recvd-86697db757-66g4l-1-6AAF3C36-17
+	2026-09-20 01:51:50.264057377 +0000 UTC m=+727969.313226060
+Received: from ODM0MjgwNQ (unknown)
+	by geopod-ismtpd-100 (SG) with HTTP
+	id lWlFlcbKSpyatU-Va0DD9g
+	Sun, 20 Sep 2026 01:51:50.196 +0000 (UTC)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset=utf-8
+Date: Sun, 20 Sep 2026 01:51:50 +0000 (UTC)
+From: The Home Depot <HomeDepot@order.homedepot.com>
+Mime-Version: 1.0
+Message-ID: <lWlFlcbKSpyatU-Va0DD9g@geopod-ismtpd-100>
+Subject: Share Cart Invitation From Joe Haas
+X-SG-EID: 
+ =?us-ascii?Q?u001=2EiyonfiKm=2FeOo58KAzDMZS398dvvFVBb8rC3RtK4RuQdhDs9xSBoCHqyB1?=
+ =?us-ascii?Q?wLHFWfmvstkM+xWn7DgKVEaXzisx6c+qm7zPuyl?=
+ =?us-ascii?Q?dOyliCcfJ96KGSila=2FV00TO6rxobNsZDRFhT7zP?=
+ =?us-ascii?Q?1=2FFUy+ZIo7WO0vCokBQmWy9qKLRg1xTE19QhsfI?=
+ =?us-ascii?Q?4vQ5+aUQOm2DcMBmIY8xdmXg9q9MLJx4qysQpGo?=
+ =?us-ascii?Q?0Kvg2+T4hRCb1eY2rMHLEbfMfQCy8ioIP6pHEGV?=
+ =?us-ascii?Q?3Q7mbvn590Qu9sBX91nUtGdKwQ=3D=3D?=
+X-SG-ID: 
+ =?us-ascii?Q?u001=2ESdBcvi+Evd=2FbQef8eZF3BksCOJRco3XL3hXdpKOQZj1F48nXT7LRYYQhV?=
+ =?us-ascii?Q?deRD2v0gQycTueYiuv0Z4HK7gVOG0VAF1=2F5XUqV?=
+ =?us-ascii?Q?Y4wNyM0=2FIiW3QYny0kWxL672MPRcAxA5uD0Gl0n?=
+ =?us-ascii?Q?Rs=2F9ABe6IUJEwypPem494jCKUOjgJFR7QofMT=2FT?=
+ =?us-ascii?Q?pPnn=2FzAv2Fhjvo09b2YnartunXLgZ6=2FpEH0Ghec?=
+ =?us-ascii?Q?M0T2mj1l7ELDb5mdMrClJOgSr6mUVu72CZ4jmiV?=
+ =?us-ascii?Q?2DrTQHhI8D15pBY0QMt0ErwjhrIF8qbX8EBNgBS?=
+ =?us-ascii?Q?cQjbQOXlHz+EgGID=2Fj=2FDcfxHiX8CqjUVek=2FXA43?=
+ =?us-ascii?Q?XZCRwtCTH+0TyuJiNTYCBudW7G03SqmoCJPgJCb?=
+ =?us-ascii?Q?3BD=2FfppK13OXXxbaBZBOAKaOFBS3o74yFxEqMzU?=
+ =?us-ascii?Q?NRs0oZ3yWReyx7B5ZdQ=3D?=
+To: joe.haas@locksmithconsulting.com
+X-Entity-ID: u001.x1FySwiJln4wr+/owYL72w==
+
+<!DOCTYPE html>
+<html lang=3D"en" xmlns=3D"http://www.w3.org/1999/xhtml" xmlns:o=3D"urn:sch=
+emas-microsoft-com:office:office" xmlns:v=3D"urn:schemas-microsoft-com:vml"=
+>
+
+<head>
+    <meta name=3D"robots" content=3D"noindex, nofollow">
+    <meta name=3D"referrer" content=3D"no-referrer">
+    <meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-scale=
+=3D1">
+    <meta http-equiv=3D"X-UA-Compatible" content=3D"IE=3Dedge">
+    <title>The Home Depot</title>
+    <link href=3D"https://fonts.googleapis.com/css?family=3DOpen+Sans+Conde=
+nsed:300,300i,700" rel=3D"stylesheet">
+    <style type=3D"text/css">
+        /* Homervetica font */
+        @font-face{font-family:homervetica-blk;src:url(https://www.homedepo=
+t.com/content/node_modules/global-css/src/fonts/homervetica/homervetica-blk=
+.eot);src:url(https://www.homedepot.com/content/node_modules/global-css/src=
+/fonts/homervetica/homervetica-blk.eot?#iefix) format("embedded-opentype"),=
+url(https://www.homedepot.com/content/node_modules/global-css/src/fonts/hom=
+ervetica/homervetica-blk.woff2) format("woff2"),url(https://www.homedepot.c=
+om/content/node_modules/global-css/src/fonts/homervetica/homervetica-blk.wo=
+ff) format("woff"),url(https://www.homedepot.com/content/node_modules/globa=
+l-css/src/fonts/homervetica/homervetica-blk.ttf)
+        format("truetype"),url(https://www.homedepot.com/content/node_modul=
+es/global-css/src/fonts/homervetica/homervetica-blk.svg#homervetica-black) =
+format("svg");font-weight:400;font-style:normal;text-transform:uppercase}@f=
+ont-face{font-family:homervetica-med;src:url(https://www.homedepot.com/cont=
+ent/node_modules/global-css/src/fonts/homervetica/homervetica-med.eot);src:=
+url(https://www.homedepot.com/content/node_modules/global-css/src/fonts/hom=
+ervetica/homervetica-med.eot?#iefix) format("embedded-opentype"),url(https:=
+//www.homedepot.com/content/node_modules/global-css/src/fonts/homervetica/h=
+omervetica-med.woff2)
+        format("woff2"),url(https://www.homedepot.com/content/node_modules/=
+global-css/src/fonts/homervetica/homervetica-med.woff) format("woff"),url(h=
+ttps://www.homedepot.com/content/node_modules/global-css/src/fonts/homervet=
+ica/homervetica-med.ttf) format("truetype"),url(https://www.homedepot.com/c=
+ontent/node_modules/global-css/src/fonts/homervetica/homervetica-med.svg#ho=
+mervetica-medium) format("svg");font-weight:400;font-style:normal;text-tran=
+sform:uppercase}
+
+
+        @charset "UTF-8";
+        html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, =
+h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, df=
+n, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var,=
+ b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, ta=
+ble, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, deta=
+ils, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, =
+ruby, section, summary, time, mark, audio, video { margin: 0; padding: 0; b=
+order: 0; font-size: 100%; font-family: Arial, Helvetica, sans-serif; verti=
+cal-align: top; color: #333; }
+
+        /* HTML5 display-role reset for older browsers */
+        /****** EMAIL CLIENT BUG FIXES - BEST NOT TO CHANGE THESE ********/
+        .ExternalClass { width: 100%; }
+
+        /* Forces Outlook.com to display emails at full width */
+        .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalCla=
+ss font, .ExternalClass td, .ExternalClass div { line-height: 100%; }
+
+        /* Forces Outlook.com to display normal line spacing, here is more =
+on that: http://www.emailonacid.com/forum/viewthread/43/ */
+        body { -webkit-text-size-adjust: none; -ms-text-size-adjust: none; =
+}
+
+        /* Prevents Webkit and Windows Mobile platforms from changing defau=
+lt font sizes. */
+        img { display: block; border: 0 none; outline: none; line-height: 1=
+00%; outline: none; text-decoration: none; vertical-align: bottom; }
+
+        a img { border: 0 none; }
+
+        /** Some email clients add space below images by default, which is =
+problematic if you=CE=93=C3=87=C3=96re tiling images. Be aware that, by set=
+ting images to block-level elements, you can=CE=93=C3=87=C3=96t align them =
+without resorting to the float or position CSS properties, which aren=CE=93=
+=C3=87=C3=96t widely supported */
+        small a { color: inherit; text-decoration: underline; }
+
+        span.yshortcuts { color: inherit; background-color: none; border: n=
+one; }
+
+        span.yshortcuts:hover, span.yshortcuts:active, span.yshortcuts:focu=
+s { color: inherit; background-color: none; border: none; }
+
+        /* Global href reset */
+        a:visited { color: inherit; text-decoration: none; }
+
+        a:focus { color: inherit; text-decoration: underline; }
+
+        a:hover { color: inherit; text-decoration: underline; }
+
+        a[x-apple-data-detectors] { color: inherit !important; text-decorat=
+ion: none !important; font-size: inherit !important; font-family: inherit !=
+important; font-weight: inherit !important; line-height: inherit !important=
+; }
+
+        /* Heading tag */
+        h1, h2, h3, h4, h5, h6 { color: #000001; }
+
+        h1 a, h2 a, h3 a, h4 a, h5 a, h6 a { color: #0000FF !important; }
+
+        /* Table reset */
+        table td { border-collapse: collapse; }
+
+        th { font-weight: normal; }
+
+        table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table=
+-rspace: 0pt; }
+
+
+        /** Mobile View Port **/
+        @media only screen and (max-width: 480px) {
+            .hide_mobile_view,
+            table.hide_mobile_view {
+                display:none !important;
+            }
+
+            .mobile_container_space{
+                padding-left:15px;
+                padding-right:15px;
+            }
+
+            .text-msg-confirmation td{
+                padding:20px 0px !important;
+            }
+
+            .visible_mobile_view
+            {
+                display:block !important;
+                max-height:none !important;
+            }
+            table.visible_mobile_view{
+                display:table !important;
+                max-height:none !important;
+            }
+
+            .mobile_view_container{
+                width:100%;
+            }
+
+            .footer-container .external-links a{
+                padding:0px 5px;
+            }
+
+            .br-sm{
+                display: none;
+            }
+
+            .template-container{
+                width:99%
+            }
+
+            .header-content a{
+                width:auto !important;
+            }
+
+            .header_background{
+                background-color:#F96302;
+                width:100%;
+                background-position:-140px 0px;
+                padding-bottom:20px;
+            }
+
+            table.inorder-header-view td.heading-one-view h2{
+                font-size:20px !important;
+            }
+            table.inorder-header-view td.heading-ques-view p{
+                font-size:12px !important;
+            }
+
+            .address_mobile_view div{
+                padding-bottom:15px !important;
+            }
+
+            .address_mobile_view p.inside-person-detail{
+                padding-top:10px !important;
+            }
+
+            .left-total-view table.total-view{
+                width:auto !important;
+            }
+
+            .item-list-cart td div{
+                font-size:12px !important;
+                line-height:16px !important;
+            }
+
+            .ls_sm_ques{
+                display:none !important;
+            }
+            .footer-container .contact-view{
+                padding:0px 10px;
+            }
+
+        }
+
+        @media only screen and (min-device-width: 319px) and (max-width: 41=
+9px) {
+            .item-list-cart th p{
+                font-size:12px !important;
+            }
+            .header_background{
+                background-position:-190px 0px !important;
+            }
+
+            .order-view-txt .visible_mobile_view .heading-one{
+                font-size:12px !important;
+            }
+            .order-view-txt .visible_mobile_view .heading-two{
+                font-size:16px !important;
+            }
+            .footer-container .contact-view{
+                font-size:12px !important;
+            }
+
+            .ls_sm,
+            .lg-view{
+                display:none !important;
+            }
+            .ls_sm_ques,
+            .sm-view{
+                display:block !important;
+            }
+
+        }
+
+        /*** End Mobile View **/
+
+    </style>
+
+<!--[if gte mso 9]><xml>
+ <o:OfficeDocumentSettings>
+  <o:AllowPNG/>
+  <o:PixelsPerInch>96</o:PixelsPerInch>
+ </o:OfficeDocumentSettings>
+</xml><![endif]-->
+</head>
+
+<body>
+<!--[if mso]>
+<style>
+
+    table td {font-family:Helvetica,Arial,sans-serif;}
+    body, table, td {font-family: Arial, Helvetica, sans-serif !important;}
+    .heading-font{font-family: Arial, 'Open Sans Condensed', sans-serif !im=
+portant;}
+</style>
+<![endif]-->
+
+<!--[if gte mso 9]>
+<xml>
+    <o:OfficeDocumentSettings>
+        <o:AllowPNG/>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+    </o:OfficeDocumentSettings>
+</xml>
+
+<![endif]-->
+<div class=3D"preheader" style=3D"display:none">
+    Joe Haas would like to share their cart with you!
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;
+
+</div>
+
+
+<table class=3D"main-container" cellpadding=3D"0" cellspacing=3D"0" border=
+=3D"0" width=3D"100%" style=3D"table-layout:fixed;">
+    <tbody>
+    <tr>
+        <td align=3D"center" valign=3D"top">
+            <!-- Start Center Postion -->
+            <table class=3D"template-container" cellpadding=3D"0" cellspaci=
+ng=3D"0" border=3D"0" width=3D"600" >
+                <tbody>
+                <tr>
+                    <td>
+                        <!-- Start Header -->
+                        <table cellpadding=3D"0" cellspacing=3D"0" border=
+=3D"0" width=3D"100%">
+    <tr>
+        <td>
+            <table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=
+=3D"100%" >
+                <tr>
+                    <td valign=3D"top" align=3D"left">
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHFSEVUzGuzCxQyyYJ=
+lZCPMOHdiyYSpopoaWoX9h5sZcmOCSAJ0gIsZjT8pzIJxmr-2BbM3lWzkCgxLQDu74qDo5ohvuD=
+g9BEsbog31QWEvWqoteuHa3hDZiRsRcoC1V1XMr3aXWFMYUhalG91n6UohFNUpxnUcKuylNZZgz=
+A3xws2nA-3D-3DPlZX_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb=
+41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6=
+dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH=
+23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZia=
+U58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCU=
+nf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL=
+5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUVqXUyw-2BPpKAbHXW1gv0PXw5KMk7cb99LMRHb=
+Aa6ZV3Xc9oGpd7uiOmeefacqyWdKOPT1o8IA-2F2M6p9AhHSjdrWHELAqM-2B1EH5wqv0nSApaq=
+7-2FuGpwzUZ86Fz7bxzniqsttTfVYkDu9zQYI4PWboY5xjb0B1ipVZEZWGTUa-2BaZi4-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#333333;">
+                            <img alt=3D"The Home Depot" src=3D"https://stor=
+age.googleapis.com/contentgrid-active/hdus/en_US/DTCCOMNEW/fetch/EmailTempl=
+ates/images/BS_THD_Logo_RGB_Global_Stacked_Left_2.png" height=3D"61">
+                        </a>
+                    </td>
+   =20
+                    <td valign=3D"top" align=3D"right">
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM6RI72N2nLkHaudZZxOAre-2FuU9fBnIQtT-2B-2=
+ByHcDm5Mr9fVqIIaVQPV3x8jsy9yR2iTTFsUgyILGF-2Fv4oqOZmqP-2BWuYWpVfERTWIik-2F6=
+OvpNSoA2iUNsuS67qDsmPou-2Btl97S4YKK8dOA5MZ1n07ZRJQG48-2FzD0MyrFb-2FR6nxDnnL=
+7fre15saHwJi0-2FAI1GODi2Gmg7lHxVFz3qS1ywyeqQGtJ-2FBiOk-2FF1gqWeRZypkZ5lRU3_=
+W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-=
+2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYR=
+Cn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA=
+6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS0=
+8r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG=
+7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2B=
+fIg5GCzem5K404TkqUpBVz9vabP4BEhvG0-2Bq-2FfuqXas2mP-2Fx80PvwkY4vh4RQ7uH6GmjA=
+W7bcLiZ5OAevQZRbGZgaJSmea85-2B13Kwq4TsQ6v5RfIOSmVU0c0HiNtCSlBtNh5BiXYAqw14j=
+YKTY0f6IU8MSMperPnwsGzawm1m6NU1voxW2p1Wn565yM3k-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#333333;">
+                            <img alt=3D"Download our app" src=3D"https://st=
+orage.googleapis.com/contentgrid-active/hdus/en_US/DTCCOMNEW/fetch/EmailTem=
+plates/images/download-app.png" height=3D"61">
+                        </a>
+                    </td>
+   =20
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style=3D"padding-top: 16px;" style=3D"width: 100%">
+            <hr style=3D"background-color: #f96302; height: 3px; border: no=
+ne;"/>
+        </td>
+    </tr>
+</table>
+                        <!-- End Header -->
+                    </td><td class=3D"hide_mobile_view">&nbsp;&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>
+                        <!-- Start Body -->
+                        <table class=3D"common-middle-template" cellpadding=
+=3D"0" cellspacing=3D"0" border=3D"0"
+                               width=3D"100%">
+                            <tr>
+                                <td style=3D"padding-top:20px">
+                                    <!-- Start Changing header -->
+                                    <table class=3D"wc-confirmation hide_mo=
+bile_view" cellpadding=3D"0"
+                                           cellspacing=3D"0" border=3D"0" w=
+idth=3D"100%" bgcolor=3D"#333333">
+                                        <tr>
+                                            <td class=3D"main-view-msg" sty=
+le=3D"background:url(https://storage.googleapis.com/contentgrid-active/hdus=
+/en_US/DTCCOMNEW/fetch/EmailTemplates/images/share-hero.jpg);">
+
+                                                <!--[if gte mso 9]>
+                                                <v:rect xmlns:v=3D"urn:sche=
+mas-microsoft-com:vml" fill=3D"true" stroke=3D"false" style=3D"width:600px;=
+height:205px;">
+                                                    <v:fill type=3D"tile" s=
+rc=3D"https://storage.googleapis.com/contentgrid-active/hdus/en_US/DTCCOMNE=
+W/fetch/EmailTemplates/images/share-hero.jpg" color=3D"#ffffff" />
+                                                    <v:textbox inset=3D"0,0=
+,0,0">
+                                                <![EndIf]-->
+
+                                                <table class=3D"thankyou-ms=
+g" cellpadding=3D"0" cellspacing=3D"0"
+                                                       border=3D"0" width=
+=3D"100%">
+                                                    <tr>
+                                                        <td style=3D"color:=
+#fff;padding:50px 20px 0px 25px;line-height: 25px;">
+                                                                    <span s=
+tyle=3D"color:#fff;font-size:16px;">
+                                                                         Jo=
+e Haas would like to</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style=3D"color:=
+#fff;padding-left:25px; padding-bottom: 25px;">
+
+                                                            <p style=3D"fon=
+t-family:'HelveticaNeue','Franklin Gothic Demi',Arial,sans-serif; color:#ff=
+f;font-size:35px;line-height:30px;margin:0px!important">
+
+                                                                share their=
+ cart with you
+
+
+                                                            </p>
+                                                        </td>
+                                                    </tr>
+
+
+
+                                                    <tr>
+                                                        <td style=3D"paddin=
+g-bottom:41px;">
+                                                            <table class=3D=
+"total-view hide_mobile_view"
+                                                                   cellpadd=
+ing=3D"0" cellspacing=3D"0" border=3D"0">
+                                                                <tr>
+                                                                    <td wid=
+th=3D"7%" style=3D"padding-bottom: 10px"></td>
+                                                                    <td sty=
+le=3D"width:250px;background:#FFFFFF;border-bottom:3px solid #FFFFFF;paddin=
+g:5px 0px;text-align:center;">
+                                                                        <di=
+v class=3D"button-view-one button-link">
+                                                                           =
+ <a href=3Dhttps://link.order.homedepot.com/ls/click?upn=3Du001.zYMiv-2BQD4=
+Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHEVlPPWIMbB1-2FmdT7a2dI9-2BM9d49yXGakMhZL=
+8IU11LCAmkBsio0csh2Z0V3y5qmqEU8tG3iqY56OtDg6FNirnVHd5I-2BK2MyIvqNqxbNHZB-2B=
+DrBhTIbYg8W8pe-2BzhrhwU06lYHbn-2BrWPnDIm352n-2BNb06T5FtwJM7KWeDzbZpIdu09gNK=
+vqOTo9CXLVnNPQLvlCUBLzWutn-2F2EA5Jaoi8OskDgFyWRQhHOvJn0jvN6qS6XOxsnWQwiTOyf=
+l41JXNOGBTbvq6j4f4a6vLZ-2BweW-2BTmqIdPFTAHVmudk1H8gEhHTC85sOMClKFOqj2edKYIJ=
+lVstXljhMcFxB0fmEK9URXfON9_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxD=
+zJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWU=
+ySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJ=
+U0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTE=
+gfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO=
+-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8ts=
+jFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUwJi2erdpaI1KatMH5FnNGoiktQlFvY=
+TS5YVlM0-2F68pODy4HL8bIV6yDtn8I4nhb4DU2XGHYg6fL5d45lDBleCGlLkzj66k3mFluQixn=
+I-2BkveXBusVK3lKVaFv77bH-2FqceIj16-2B1GgGM7PsCJImOYhJaCsnXnKSFGrHY4iK3REKs-=
+3D
+                                                                           =
+    target=3D"_blank" style=3D"text-align:center;display:block;color:#F9630=
+2;font-size:18px;text-decoration:none;font-weight:bold;">
+                                                                           =
+     View Cart</a>
+                                                                        </d=
+iv>
+
+                                                                    </td>
+                                                                </tr>
+
+                                                            </table>
+
+                                                        </td>
+                                                    </tr>
+
+                                                </table>
+
+                                                <!--[if gte mso 9]>
+                                                </v:textbox>
+                                                </v:rect>
+                                                <![EndIf]-->
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <!--[if !mso]><!-->
+                                    <table class=3D"visible_mobile_view hea=
+der_background" style=3D"display:none;max-height:0px;overflow:hidden;"
+                                           cellpadding=3D"0" cellspacing=3D=
+"0" border=3D"0" width=3D"100%">
+                                        <tr>
+                                            <td width=3D"100%">
+                                                <div class=3D"" style=3D"co=
+lor:#fff; padding-top:10px; padding-left:15px;padding-bottom:5px; text-alig=
+n:left;">
+
+                                                    <p style=3D"color:#fff;=
+ padding-top:10px;padding-bottom:10px;">
+                                                        <span style=3D"colo=
+r:#fff;font-size:14px;">Joe Haas would like to </span>
+                                                    </p>
+                                                    <p style=3D"font-family=
+:'HelveticaNeue','Franklin Gothic Demi',Arial,sans-serif; color:#fff;font-s=
+ize:25px;line-height:30px;padding-bottom: 20px;">
+                                                        Share their cart wi=
+th you
+                                                    </p>
+                                                </div>
+                                                <div style=3D"padding:0px 1=
+5px 15px 15px;">
+                                                    <a href=3Dhttps://link.=
+order.homedepot.com/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzk=
+xZKonknrGUHEVlPPWIMbB1-2FmdT7a2dI9-2BM9d49yXGakMhZL8IU11LCAmkBsio0csh2Z0V3y=
+5qmqEU8tG3iqY56OtDg6FNirnVHd5I-2BK2MyIvqNqxbNHZB-2BDrBhTIbYg8W8pe-2BzhrhwU0=
+6lYHbn-2BrWPnDIm352n-2BNb06T5FtwJM7KWeDzbZpIdu09gNKvqOTo9CXLVnNPQLvlCUBLzWu=
+tn-2F2EA5Jaoi8OskDgFyWRQhHOvJn0jvN6qS6XOxsnWQwiTOyfl41JXNOGBTbvq6j4f4a6vLZ-=
+2BweW-2BTmqIdPFTAHVmudk1H8gEhHTC85sOMClKFOqj2edKYIJlVstXljhMcFxB0fmEK9URX5k=
+U-_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7q=
+vX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMH=
+oYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2B=
+qDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnO=
+YS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6q=
+IzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW=
+-2BfIg5GCzem5K404TkqUnyHzXmmfZOXfz8AMPlWbrmW60x2oMw5gG4bvjMbhycr0C-2FvMmdnL=
+WIibKVJ1TAczuDbbLpw2HETFQ9yqkx-2FNrEeSHFktVuKK2WZfJFUkeOMmOHJbhO-2F-2Bsy8zE=
+PTLGt-2Fmu97JCXOnxGmbOKGKf91zV3NFKhMVVmoFuapjNMidOT4-3D
+                                                       target=3D"_blank" cl=
+ass=3D"button-full-bg" style=3D"text-align:center;color:#F96302;font-size:1=
+8px;text-decoration:none;font-weight:bold;">
+                                                    <p style=3D"color:#F963=
+02;padding:10px 15px;background:#FFFFFF;border-bottom:3px solid #C14C00; te=
+xt-align:center;"
+                                                       class=3D"button-full=
+-td">
+
+                                                            View Cart
+                                                    </p>
+                                                    </a>
+                                                </div>
+
+
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <!--<![endif]-->
+                                </td>
+                            </tr>
+
+                            <!-- End Changing header -->
+
+                            <tr>
+                                <td>
+                                    <!-- Start Instore Order -->
+                                    <table class=3D"your-inorder-list" cell=
+padding=3D"0" cellspacing=3D"0" border=3D"0"
+                                           width=3D"100%">
+                                        <tbody>
+                                        <tr>
+                                            <!--- Repeat Order Confirmation=
+-->
+                                            <td class=3D"mobile_container_s=
+pace">
+                                                <!--Carry out-->
+
+
+                                                <table class=3D"pickup-stor=
+e" cellpadding=3D"0"
+                                                       cellspacing=3D"0" bo=
+rder=3D"0" width=3D"100%">
+
+                                                    <tr>
+                                                        <td class=3D"" styl=
+e=3D"padding-bottom:18px;">
+                                                            <table class=3D=
+"hide_mobile_view" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" width=
+=3D"100%">
+                                                                <tbody>
+                                                                <tr>
+                                                                    <td cla=
+ss=3D"" style=3D"padding-top:35px;border-bottom:3px solid #F96302;" align=
+=3D"left" width=3D"30%">
+                                                                        <h2=
+ style=3D"font-size:20px;font-weight:bold;color:#333;margin:0px !important;=
+">Joe Haas's Cart </h2>
+                                                                    </td>
+                                                                    <td cla=
+ss=3D"heading-ques-view" style=3D"padding-top:45px;border-bottom:1px solid =
+#999;"valign=3D"bottom" align=3D"right">
+                                                                        &nb=
+sp;
+                                                                    </td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+
+                                                            <!--[if !mso]><=
+!-->
+                                                            <table class=3D=
+"visible_mobile_view" style=3D"display:none;border-bottom:3px solid #F96302=
+" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" width=3D"100%">
+                                                                <tbody>
+                                                                <tr style=
+=3D"">
+                                                                    <td cla=
+ss=3D"" style=3D"padding-top:35px;" align=3D"left" >
+                                                                        <h2=
+ style=3D"font-size:20px;font-weight:bold;color:#333;margin:0px !important;=
+">Joe Haas's Cart </h2>
+                                                                    </td>
+
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <!--<![endif]--=
+>
+                                                        </td>
+
+
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td colspan=3D"2" s=
+tyle=3D"padding-bottom: 10px;">
+
+                                                            <!-- Item Lists=
+ Start -->
+                                                            <table class=3D=
+"hide_mobile_view desktop_item_list" cellpadding=3D"0" cellspacing=3D"0" bo=
+rder=3D"0" width=3D"100%">
+                                                                <tr>
+                                                                    <td sty=
+le=3D"padding:8px 10px;background:#EEE;">
+                                                                        <ta=
+ble cellpadding=3D"0" cellspacing=3D"0" border=3D"0" width=3D"100%">
+                                                                           =
+ <tr>
+                                                                           =
+     <td style=3D"background:#EEE;width:235px;">
+                                                                           =
+         <div style=3D"background:#eee;font-size:14px;font-weight:bold;colo=
+r:#333;text-align:left;">
+                                                                           =
+             Item</div>
+                                                                           =
+     </td>
+                                                                           =
+     <td style=3D"background:#EEE;width:150px;">
+                                                                           =
+         <div class=3D"aligh-rt hide_mobile_view" style=3D"background:#eee;=
+font-size:14px;font-weight:bold;color:#333;text-align:left;">
+                                                                           =
+             <span>In Store</span>
+                                                                           =
+         </div>
+
+                                                                           =
+     </td>
+                                                                           =
+     <td style=3D"background:#EEE;width:130px;">
+                                                                           =
+         <div class=3D"aligh-rt" style=3D"background:#eee;font-size:14px;fo=
+nt-weight:bold;color:#333;text-align:left;text-align:center;">
+                                                                           =
+             Qty</div>
+                                                                           =
+     </td>
+                                                                           =
+     <td style=3D"background:#EEE;width:68px">
+                                                                           =
+         <div class=3D"aligh-rt hide_mobile_view" style=3D"background:#eee;=
+font-size:14px;font-weight:bold;color:#333;text-align:left;text-align:right=
+;">
+                                                                           =
+             <span>Item Total</span>
+                                                                           =
+         </div>
+                                                                           =
+     </td>
+
+                                                                           =
+ </tr>
+                                                                        </t=
+able>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td>
+                                                                        <ta=
+ble cellpadding=3D"0" cellspacing=3D"0" border=3D"0" width=3D"100%">
+
+
+
+                                                                           =
+=20
+                                                                           =
+=20
+                                                                           =
+ <tr>
+                                                                           =
+     <td style=3D"border-bottom:2px solid #EEE;">
+                                                                           =
+         <table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" width=3D"1=
+00%">
+                                                                           =
+             <tr>
+                                                                           =
+                 <td>
+                                                                           =
+                     <table cellpadding=3D"0" cellspacing=3D"0" border=3D"0=
+" width=3D"100%">
+                                                                           =
+                         <tr>
+                                                                           =
+                             <td style=3D"padding:15px 10px 15px 0px;line-h=
+eight:22px;width:210px;" valign=3D"top">
+
+                                                                           =
+                                 <table>
+                                                                           =
+                                     <tr>
+                                                                           =
+                                         <td valign=3D"top">
+                                                                           =
+                                             <span >
+                                                                           =
+                                                =20
+                                                                           =
+                                                 <a href=3Dhttps://link.ord=
+er.homedepot.com/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZK=
+onknrGUHFNZgQRWl3w3dr0PBg6iYo64qXaH7s3SknQQrRZlGmE-2Fo0PrPbfTfaRwTkeYBDgBEJ=
+CPOsfugtvWFwy3nyca9yBRWq7nAUAjB14C8NVUBsV7pn-2BpBq4c00uFlNMBKZOWuGN4IZxdPEa=
+P-2BmfPvvoyyfpyAs-2FLsZwxVxIPWrS49RHT1EJ6Ia1GctfArdzk-2FhyEFtfygCGyXc1potrU=
+2G1g9k8rVqGy5BkqBioHOZsgcetapAy-2FkGh3iHW-2Be8-2BqucvhqNSnWQTa-2BrFSPACpwJ-=
+2Fm5UlUJ2r-2FBzOeooLLMLS4BB-2FSsLYEbX4jIN2M4w8FuAaNrbMcrCnsUMp9nITEdm0JzhSR=
+czYKlKbf6bPr-2Frwjt4ciw-3D-3DjxfR_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Oge=
+snk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M=
+1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39=
+zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlc=
+Xx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk=
+7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fu=
+x8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUSD9oomVWXUZbmvsXVX86vjq=
+X8tvLFeRVQ-2BA7Lp2dKHpz-2BVkOn2BsJtVhn-2FbxYycXcPWt0JgAW9XFoTenrfp3hCiBThlk=
+YhT-2BkNQx9TfW3QqBpRVVrLglx8b-2BokGmAT37ATFjIX-2BpJaSEbUBr8Eoy-2BnaPheol-2B=
+rUBhn8hhkF1bxQ-3D target=3D"_blank">
+                                                                           =
+                                                =20
+                                                                           =
+                                                    =20
+                                                                           =
+                                                     <img style=3D"display:=
+inline-block;" src=3D"https://images.thdstatic.com/productImages/c11eddf5-1=
+7af-4698-a3d3-1e266d2cb2d9/svn/grip-rite-collated-roofing-nails-grcr3dgal-6=
+4_400.jpg" alt=3D"Product Image" width=3D"60" height=3D"60" />
+                                                                           =
+                                                    =20
+                                                                           =
+                                                =20
+                                                                           =
+                                                     </a>
+                                                                           =
+                                                =20
+                                                                           =
+                                             </span>
+                                                                           =
+                                         </td>
+                                                                           =
+                                         <td style=3D"padding-left:5px;font=
+-size:14px;color:#333;line-height:22px;" valign=3D"top">
+
+
+                                                                           =
+                                             <span>
+
+                                                                           =
+                                                    =20
+                                                                           =
+                                                     <a href=3Dhttps://link=
+.order.homedepot.com/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBz=
+kxZKonknrGUHFNZgQRWl3w3dr0PBg6iYo64qXaH7s3SknQQrRZlGmE-2Fo0PrPbfTfaRwTkeYBD=
+gBEJCPOsfugtvWFwy3nyca9yBRWq7nAUAjB14C8NVUBsV7pn-2BpBq4c00uFlNMBKZOWuGN4IZx=
+dPEaP-2BmfPvvoyyfpyAs-2FLsZwxVxIPWrS49RHT1EJ6Ia1GctfArdzk-2FhyEFtfygCGyXc1p=
+otrU2G1g9k8rVqGy5BkqBioHOZsgcetapAy-2FkGh3iHW-2Be8-2BqucvhqNSnWQTa-2BrFSPAC=
+pwJ-2Fm5UlUJ2r-2FBzOeooLLMLS4BB-2FSsLYEbX4jIN2M4w8FuAaNrbMcrCnsUMp9nITEdm0J=
+zhSRczYKlKbf6bPr-2Frwjt4ciw-3D-3DQLKR_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i=
+1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CD=
+HK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5c=
+bP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IX=
+vYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBow=
+QwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY=
+-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqU6ObkyqpIE63jxzc1XgR=
+PweNyr-2Fhf6TD5b7ucugJSJ409NrYeR2vux1mOO5NyWQrDXUMfjRybFP-2BCbDO1cDOXw-2Fak=
+vic09qpE-2BBzp0cq0dbGWtz46YQzmxLcrYVgtC3ARFDMBSNrrpYVynGGgV-2FSHJ7HtSayoEGk=
+xy72sFrNdfJ0-3D target=3D"_blank" style=3D"color:#333;text-decoration:none;=
+">
+                                                                           =
+                                                    =20
+                                                                           =
+                                                     <b>   Grip-Rite  </b>1=
+-1/4 in. x 0.120-Gauge 15=C2=B0 Smooth Shank Electrogalvanized Wire Collate=
+d Coil Roofing Nails 7,200 per Box
+                                                                           =
+                                                    =20
+                                                                           =
+                                                         </a>
+                                                                           =
+                                                    =20
+
+                                                                           =
+                                             </span>
+                                                                           =
+                                             <br/>
+                                                                           =
+                                             <span style=3D"color:#999;font=
+-size:13px;">
+                                                                           =
+                                                  Model  #GRCR3DGAL  <br/>
+                                                                           =
+                                                  Store SKU  #112525  <br/>
+                                                                           =
+                                             </span>
+
+                                                                           =
+                                         </td>
+                                                                           =
+                                     </tr>
+                                                                           =
+                                 </table>
+
+                                                                           =
+                             </td>
+
+                                                                           =
+                             <td style=3D"padding:15px 10px 15px 0px;line-h=
+eight:22px;width:150px;" valign=3D"top" >
+
+                                                                           =
+                                =20
+                                                                           =
+                                 <div class=3D"aligh-rt" style=3D"font-size=
+:14px;color:#333;">
+                                                                           =
+                                     <table>
+                                                                           =
+                                         <tr>
+                                                                           =
+                                             <td valign=3D"top" >
+                                                                           =
+                                                 <span style=3D"font-size:1=
+4px;">
+                                                                           =
+                                                     <img alt=3D"pin" style=
+=3D"display:inline-block;" src=3D"https://storage.googleapis.com/contentgri=
+d-active/hdus/en_US/DTCCOMNEW/fetch/EmailTemplates/images/pin.png" width=3D=
+"15" height=3D"18"/>
+                                                                           =
+                                                 </span>
+                                                                           =
+                                             </td>
+                                                                           =
+                                             <td style=3D"padding-left:10px=
+;font-size:14px;">
+
+                                                                           =
+                                                =20
+
+                                                                           =
+                                                     Aisle 15<br/>
+                                                                           =
+                                                     Bay 002
+                                                                           =
+                                                 </span>
+                                                                           =
+                                             </td>
+                                                                           =
+                                         </tr>
+                                                                           =
+                                     </table>
+                                                                           =
+                                 </div>
+                                                                           =
+                                =20
+
+
+
+                                                                           =
+                             </td>
+
+                                                                           =
+                             <td style=3D"padding:15px 10px;line-height:22p=
+x;width:62px;" valign=3D"top">
+                                                                           =
+                                 <div class=3D"aligh-rt" style=3D"font-size=
+:14px;color:#333;text-align:center;">
+                                                                           =
+                                     1
+                                                                           =
+                                 </div>
+                                                                           =
+                             </td>
+                                                                           =
+                             <td style=3D"padding:15px 10px;line-height:22p=
+x;width:78px;" valign=3D"top">
+                                                                           =
+                                 <div class=3D"aligh-rt" style=3D"font-size=
+:14px;color:#333;text-align:right;">
+                                                                           =
+                                     $49.98
+                                                                           =
+                                 </div>
+                                                                           =
+                             </td>
+                                                                           =
+                         </tr>
+                                                                           =
+                     </table>
+                                                                           =
+                 </td>
+                                                                           =
+             </tr>
+                                                                           =
+         </table>
+
+                                                                           =
+     </td>
+                                                                           =
+ </tr>
+                                                                           =
+=20
+                                                                           =
+=20
+
+
+
+
+
+
+
+                                                                        </t=
+able>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                            <!--[if !mso]><=
+!-->
+                                                            <table class=3D=
+"visible_mobile_view mobile_item_list" cellpadding=3D"0" cellspacing=3D"0" =
+border=3D"0" width=3D"100%" style=3D"display:none">
+                                                                <tr>
+                                                                    <td>
+
+                                                                        <p =
+style=3D"background:#eee; font-size:14px;padding:10px;"> <b>Item</b> </p>
+
+                                                                       =20
+                                                                       =20
+                                                                        <di=
+v class=3D"item_view" style=3D"border-bottom:1px solid #ccc; padding:25px 0=
+px;">
+                                                                           =
+ <table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" width=3D"100%">
+                                                                           =
+     <tr>
+                                                                           =
+         <td style=3D"font-size:14px;">
+                                                                           =
+             <div class=3D"image-view">
+                                                                           =
+                         <span>
+                                                                           =
+                            =20
+                                                                           =
+                             <a href=3Dhttps://link.order.homedepot.com/ls/=
+click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHFNZgQRWl3w3d=
+r0PBg6iYo64qXaH7s3SknQQrRZlGmE-2Fo0PrPbfTfaRwTkeYBDgBEJCPOsfugtvWFwy3nyca9y=
+BRWq7nAUAjB14C8NVUBsV7pn-2BpBq4c00uFlNMBKZOWuGN4IZxdPEaP-2BmfPvvoyyfpyAs-2F=
+LsZwxVxIPWrS49RHT1EJ6Ia1GctfArdzk-2FhyEFtfygCGyXc1potrU2G1g9k8rVqGy5BkqBioH=
+OZsgcetapAy-2FkGh3iHW-2Be8-2BqucvhqNSnWQTa-2BrFSPACpwJ-2Fm5UlUJ2r-2FBzOeooL=
+LMLS4BB-2FSsLYEbX4jIN2M4w8FuAaNrbMcrCnsUMp9nITEdm0JzhSRczYKlKbf6bPr-2Frwjt4=
+ciw-3D-3D1W2Q_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQt=
+a9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9d=
+JHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3=
+Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG=
+9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0=
+uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVV=
+PQyz-2FLRIW-2BfIg5GCzem5K404TkqUGVtyFJZU1aEI536lriRmwSZUcUxcpd5ata4ntUQzWIA=
+v1zMfBhCI633tAXVUTvQvbqA09Hom6-2ByfCGa6uLFVmYJ5PEKovEt4hlk0Gn7t3o0xBWbJiLvc=
+KHu9mGx9VKBCF3w4y9iqkJ2PnA18-2FGYIm5vE3YzdyiI4qi17Pb8nqvE-3D target=3D"_bla=
+nk">
+                                                                           =
+                            =20
+                                                                           =
+                                =20
+                                                                           =
+                                 <img style=3D"display:inline-block;" src=
+=3D"https://images.thdstatic.com/productImages/c11eddf5-17af-4698-a3d3-1e26=
+6d2cb2d9/svn/grip-rite-collated-roofing-nails-grcr3dgal-64_400.jpg" alt=3D"=
+Product Image" width=3D"60" height=3D"60" />
+                                                                           =
+                                =20
+                                                                           =
+                            =20
+                                                                           =
+                                 </a>
+                                                                           =
+                            =20
+                                                                           =
+                         </span>
+                                                                           =
+             </div>
+                                                                           =
+         </td>
+                                                                           =
+         <td style=3D"font-size:14px;">
+                                                                           =
+             <div class=3D"desc-view" style=3D"padding-left:10px;line-heigh=
+t:20px;padding-right:20px;">
+
+                                                                           =
+                 <p>
+                                                                           =
+                    =20
+                                                                           =
+                     <a href=3Dhttps://link.order.homedepot.com/ls/click?up=
+n=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHFNZgQRWl3w3dr0PBg6iY=
+o64qXaH7s3SknQQrRZlGmE-2Fo0PrPbfTfaRwTkeYBDgBEJCPOsfugtvWFwy3nyca9yBRWq7nAU=
+AjB14C8NVUBsV7pn-2BpBq4c00uFlNMBKZOWuGN4IZxdPEaP-2BmfPvvoyyfpyAs-2FLsZwxVxI=
+PWrS49RHT1EJ6Ia1GctfArdzk-2FhyEFtfygCGyXc1potrU2G1g9k8rVqGy5BkqBioHOZsgceta=
+pAy-2FkGh3iHW-2Be8-2BqucvhqNSnWQTa-2BrFSPACpwJ-2Fm5UlUJ2r-2FBzOeooLLMLS4BB-=
+2FSsLYEbX4jIN2M4w8FuAaNrbMcrCnsUMp9nITEdm0JzhSRczYKlKbf6bPr-2Frwjt4ciw-3D-3=
+DNKXU_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BY=
+q7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvI=
+zMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV=
+-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwz=
+EnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7H=
+X6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FL=
+RIW-2BfIg5GCzem5K404TkqUfRNYeZAaNbhqkKdmwgY7V8XiMtAcDDpX1mNLBKfeX0xYa8ThdKz=
+a5UeZQzm520oFrXFI66q327OQ0QuX26DnTORoE8Q2tYUuqiZGXwNRmSazTIYu22gztVKtAEzwuN=
+nRgXGCjUhV3ZZQ9QckqY6ORT4UKzHLaEdyAZKBcU4-2FSeU-3D target=3D"_blank" style=
+=3D"color:#333;text-decoration:none;">
+                                                                           =
+                        =20
+                                                                           =
+                         <b>   Grip-Rite  </b>1-1/4 in. x 0.120-Gauge 15=C2=
+=B0 Smooth Shank Electrogalvanized Wire Collated Coil Roofing Nails 7,200 p=
+er Box
+                                                                           =
+                        =20
+                                                                           =
+                     </a>
+                                                                           =
+                    =20
+                                                                           =
+                 </p>
+                                                                           =
+                 <p style=3D"color:#999;font-size:14px;padding-bottom:10px;=
+ line-height:25px;">
+                                                                           =
+                      Model  #GRCR3DGAL  <br/>
+                                                                           =
+                      Store SKU  #112525  <br/>
+                                                                           =
+                 </p>
+
+
+                                                                           =
+                =20
+                                                                           =
+                 <p style=3D"padding-bottom:10px;">
+
+                                                                           =
+                    =20
+
+                                                                           =
+                     Aisle 15<br/>
+                                                                           =
+                     Bay 002
+
+                                                                           =
+                 </p>
+                                                                           =
+                =20
+                                                                           =
+                 <p style=3D"padding-bottom:10px;"> <b> Qty </b> <span styl=
+e=3D"display:inline-block;float:right;"> 1</span> </p>
+                                                                           =
+                 <p style=3D""> <b> Item Total </b> <span style=3D"display:=
+inline-block;float:right;"> $49.98</span> </p>
+                                                                           =
+             </div>
+                                                                           =
+         </td>
+                                                                           =
+     </tr>
+                                                                           =
+ </table>
+
+                                                                        </d=
+iv>
+                                                                       =20
+                                                                       =20
+
+
+
+
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                            <!--<![endif]--=
+>
+
+
+                                                            <!-- Item Lists=
+ End -->
+
+                                                        </td>
+                                                    </tr>
+
+
+                                                </table>
+
+
+                                            </td>
+                                            <!--- End Repeat Order Confirma=
+tion-->
+                                        </tr>
+
+                                        <tr>
+                                            <td>
+
+                                                <table class=3D"sub-total-v=
+iew hide_mobile_view" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" widt=
+h=3D"100%">
+                                                    <tr>
+
+                                                        <td class=3D"right-=
+total-view" style=3D"padding-top:10px;padding-left:154px;">
+
+                                                            <table align=3D=
+"right" class=3D"sub-count" cellpadding=3D"0" cellspacing=3D"0" width=3D"80=
+%" style=3D"font-size:15px;">
+                                                                <tbody>
+                                                                <tr>
+                                                                    <td sty=
+le=3D"padding:4px;text-align:left;"><span class=3D"total-heading" style=3D"=
+display:block;">Subtotal</span></td>
+                                                                    <td sty=
+le=3D"padding:4px;text-align:right;">
+                                                                        <sp=
+an style=3D"display:block;"> $49.98</span> </td>
+                                                                </tr>
+
+
+                                                               =20
+                                                                <tr>
+                                                                    <td sty=
+le=3D"padding:4px;text-align:left;"><span class=3D"total-heading" style=3D"=
+display:block;">Shipping</span></td>
+                                                                    <td sty=
+le=3D"padding:4px;text-align:right;">
+                                                                        <sp=
+an style=3D"display:block;"> $0</span> </td>
+                                                                </tr>
+                                                               =20
+                                                                <tr>
+                                                                    <td sty=
+le=3D"padding:4px 4px 12px 4px;text-align:left;"><span class=3D"total-headi=
+ng" style=3D"display:block;">Sales Tax</span></td>
+                                                                    <td sty=
+le=3D"padding:4px 4px 12px 4px;text-align:right;">
+                                                                        <sp=
+an style=3D"display:block;"> $0</span> </td>
+                                                                </tr>
+
+                                                               =20
+
+                                                               =20
+
+
+                                                                <tr>
+                                                                    <td sty=
+le=3D"padding:10px 10px 10px 5px;border-top: 1px solid  #CCCCCC;"><span cla=
+ss=3D"total-heading" style=3D"font-size:25px;font-weight:bold;color:#333;di=
+splay:block;text-align:right;text-align:left;">Est. Total</span></td>
+                                                                    <td sty=
+le=3D"padding:10px 3px 10px 10px;text-align:right;border-top: 1px solid  #C=
+CCCCC;">
+                                                                        <sp=
+an style=3D"font-size:25px;font-weight:bold;color:#333;display:block;text-a=
+lign:right;"> $49.98</span> </td>
+                                                                </tr>
+
+
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+
+
+                                                        <td class=3D"right-=
+total-view" style=3D"padding-top:10px;padding-bottom:10px;padding-left:154p=
+x;">
+
+                                                            <table align=3D=
+"right" class=3D"sub-count" cellpadding=3D"0" cellspacing=3D"0" width=3D"80=
+%" style=3D"font-size:15px;">
+                                                                <tr>
+                                                                    <td cla=
+ss=3D"button-view-one" style=3D"background:#F96302;border-bottom:3px solid =
+#C14C00;padding:10px 0px;text-align:center;">
+                                                                        <di=
+v class=3D"button-link">
+                                                                           =
+ <a href=3Dhttps://link.order.homedepot.com/ls/click?upn=3Du001.zYMiv-2BQD4=
+Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHEVlPPWIMbB1-2FmdT7a2dI9-2BM9d49yXGakMhZL=
+8IU11LCAmkBsio0csh2Z0V3y5qmqEU8tG3iqY56OtDg6FNirnVHd5I-2BK2MyIvqNqxbNHZB-2B=
+DrBhTIbYg8W8pe-2BzhrhwU06lYHbn-2BrWPnDIm352n-2BNb06T5FtwJM7KWeDzbZpIdu09gNK=
+vqOTo9CXLVnNPQLvlCUBLzWutn-2F2EA5Jaoi8OskDgFyWRQhHOvJn0jvN6qS6XOxsnWQwiTOyf=
+l41JXNOGBTbvq6j4f4a6vLZ-2BweW-2BTmqIdPFTAHVmudk1H8gEhHTC85sOMClKFOqj2edKYIJ=
+lVstXljhMcFxB0fmEK9URXbiA4_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxD=
+zJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWU=
+ySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJ=
+U0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTE=
+gfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO=
+-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8ts=
+jFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUukNmoTIfb40JHYr8eGGKyEMH7FPcF8=
+nJ1uBt-2BTdFGSsya6a41mqm9UqVAguEgWOnVVairuMNLbPjfsKtfjaZGGhEXpLnkhHeJOvABU7=
+icF1xwEXRs5GqYUSUiw8OEL-2FPtxI07HpcBCG8PKD80W9jm4dBpmWzHQ9lKvWW8cj-2FMaM-3D=
+ target=3D"_blank" style=3D"text-align:center;display:block;color:#fff;font=
+-size:18px;text-decoration:none;font-weight:bold;"> View Cart </a>
+                                                                        </d=
+iv>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+
+
+                                                        </td>
+                                                    </tr>
+
+
+                                                </table>
+
+                                            </td>
+                                        </tr>
+                                        <!--[if !mso]><!-->
+                                        <tr>
+
+                                            <td class=3D"mobile_container_s=
+pace">
+                                                <table class=3D"sub-total-v=
+iew visible_mobile_view" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" w=
+idth=3D"100%" style=3D"display:none">
+
+
+                                                    <tr>
+                                                        <td style=3D"paddin=
+g-top:5px;" >
+                                                            <div class=3D"t=
+otal-link" style=3D"width:100%;">
+                                                                <table vali=
+gn=3D"right" class=3D"sub-count visible_mobile_view" cellpadding=3D"0" cell=
+spacing=3D"0" width=3D"100%" style=3D"display:none;font-size:15px;">
+                                                                    <tbody>
+                                                                    <tr>
+                                                                        <td=
+ style=3D"padding:4px;text-align:left;width:10% !important;"><span class=3D=
+"total-heading" style=3D"display:inline-block;">Subtotal</span></td>
+                                                                        <td=
+ style=3D"padding:4px;text-align:right;width:10% !important;">
+                                                                           =
+ <span style=3D"display:inline-block;"> $49.98</span> </td>
+                                                                    </tr>
+                                                                   =20
+
+                                                                    <tr>
+                                                                        <td=
+ style=3D"padding:4px;text-align:left;"><span class=3D"total-heading" style=
+=3D"display:inline-block;">Shipping</span></td>
+                                                                        <td=
+ style=3D"padding:4px;text-align:right;">
+                                                                           =
+ <span style=3D"display:inline-block;"> $0</span> </td>
+                                                                    </tr>
+                                                                   =20
+                                                                    <tr>
+                                                                        <td=
+ style=3D"padding:4px 4px 10px 4px;text-align:left;"><span class=3D"total-h=
+eading" style=3D"display:inline-block;">Sales Tax</span></td>
+                                                                        <td=
+ style=3D"padding:4px 4px 10px 4px;text-align:right;">
+                                                                           =
+ <span style=3D"display:inline-block;"> $0</span> </td>
+                                                                    </tr>
+                                                                   =20
+                                                                   =20
+
+
+                                                                    </tbody=
+>
+                                                                </table>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td style=3D"paddin=
+g-bottom:20px; padding-top:15px;border-top: 1px solid  #CCCCCC;">
+                                                            <table class=3D=
+"order-total visible_mobile_view" valign=3D"right" cellpadding=3D"0" cellsp=
+acing=3D"0" width=3D"100%" style=3D"display:none;font-size:25px;">
+                                                                <tbody>
+                                                                <tr>
+                                                                    <td sty=
+le=3D"width:10% !important;"><span class=3D"total-heading" style=3D"font-si=
+ze:24px;font-weight:bold;color:#333;display:inline-block;text-align:left;">=
+Est. Total</span></td>
+                                                                    <td sty=
+le=3D"text-align:right;width:10% !important;">
+                                                                        <sp=
+an style=3D"font-size:25px;font-weight:bold;color:#333;display:inline-block=
+;text-align:right;">  $49.98</span> </td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style=3D"paddin=
+g-bottom:10px;" width=3D"10%">
+                                                            <div style=3D"b=
+ackground-color: #F96302;">
+                                                                <a href=3Dh=
+ttps://link.order.homedepot.com/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM=
+-2F5L8hOkBzkxZKonknrGUHEVlPPWIMbB1-2FmdT7a2dI9-2BM9d49yXGakMhZL8IU11LCAmkBs=
+io0csh2Z0V3y5qmqEU8tG3iqY56OtDg6FNirnVHd5I-2BK2MyIvqNqxbNHZB-2BDrBhTIbYg8W8=
+pe-2BzhrhwU06lYHbn-2BrWPnDIm352n-2BNb06T5FtwJM7KWeDzbZpIdu09gNKvqOTo9CXLVnN=
+PQLvlCUBLzWutn-2F2EA5Jaoi8OskDgFyWRQhHOvJn0jvN6qS6XOxsnWQwiTOyfl41JXNOGBTbv=
+q6j4f4a6vLZ-2BweW-2BTmqIdPFTAHVmudk1H8gEhHTC85sOMClKFOqj2edKYIJlVstXljhMcFx=
+B0fmEK9URXFDZD_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQ=
+ta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9=
+dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG=
+3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58q=
+G9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H=
+0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWV=
+VPQyz-2FLRIW-2BfIg5GCzem5K404TkqUtf1Ol4tsxkJUnGWe7akC-2B6bfHRNmMbWgUgu-2FTd=
+2FEey6McvzKVkbKWz2qEHd0I8iAN12K17QErbL46SOeuILI-2FM8GW-2BcZoOrxfyEPqnycWCwX=
+63-2BjMN1ZvlPDH3gbzdQklTZCSxWuIstAXb2pVp-2FOnlRIynthkHFl1OWUnKTzq4-3D
+                                                                   target=
+=3D"_blank" class=3D"button-full-bg" style=3D"text-align:center;color:#F963=
+02;font-size:18px;text-decoration:none;font-weight:bold;">
+                                                                    <p styl=
+e=3D"color: #FFFFFF;;padding:10px 15px; text-align:center;"
+                                                                       clas=
+s=3D"button-full-td">
+
+                                                                        Vie=
+w Cart
+                                                                    </p>
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                </table>
+
+                                            </td>
+                                        </tr>
+                                        <!--<![endif]-->
+
+
+
+
+
+                                        </tbody>
+                                    </table>
+                                    <!-- End Changing header -->
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- End Body -->
+                    </td>
+                    <td class=3D"hide_mobile_view">&nbsp;&nbsp;</td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <!-- Marketing Info -->
+                       =20
+<table class=3D"marketing-info hide_mobile_view desktop" border=3D"0" width=
+=3D"600" cellpadding=3D"0" cellspacing=3D"0">
+    <tr>
+        <td valign=3D"top" align=3D"left" style=3D"padding: 40px 0 10px 0;"=
+>
+            <!--OPT IN BANNER FULL WIDTH FULL-->
+
+            <!--Desktop-->
+            <table cellspacing=3D"0" cellpadding=3D"0" border=3D"0" class=
+=3D"hide" width=3D"100%">
+                <tr>
+                    <td align=3D"left" valign=3D"top" background=3D"https:/=
+/storage.googleapis.com/contentgrid-active/hdus/en_US/DTCCOMNEW/fetch/Email=
+Templates/images/marketing-top.jpg"
+                        bgcolor=3D"#000000" width=3D"600" height=3D"70" cla=
+ss=3D"fullmobbg" >
+
+                        <div>
+                            <table cellspacing=3D"0" cellpadding=3D"0" bord=
+er=3D"0" width=3D"100%">
+                                <tr>
+                                    <td align=3D"left" valign=3D"top">
+                                        <!--add content tables here-->
+                                        <a target=3D"_blank" href=3D"https:=
+//link.order.homedepot.com/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM9Z5-2=
+FuQ9Q-2FdXkKY1GoZW80K0nohKCGt59R6W3a1jVTDjUQGljzC6BHMH6HsuM14TbT5oiEdp2u3IJ=
+1HI5KnL4x5uJsKF6lmrjDK7UKdEoT0cy0n78c9frUvnBKNcRZQ1NmIX7iXCPu-2Bf0MiL-2FeUG=
+PDTNoi8bGWdyU9VbKeQ0jD-2FtruBH9PkHfzV85W-2BFXrcfedpSA0BiqRonugQjd9jfu1xca-2=
+F87MWCoUs-2F2lb6xbk-2BMBsNRn6ARq-2Fw3ytyDNH3WBw-3D-3DnQqk_W9FaNzDNe6tRLbc0s=
+tba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIX=
+xHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuO=
+PUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2S=
+I5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHL=
+WtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZW=
+xRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404Tkq=
+UP1UP51d89uS90fI9JhJlct-2FdJCD1ZZosSXbZ2eqgi1fzk4wiNbuaCu9SPrALeqxQHTS7I1m-=
+2BRsZsCFvUWwr-2FZiJIW0cxjf-2BPMFQkXASHfCEpA2J0BWBWHWRS069SF8l6L8XeZEwbuxL9r=
+0-2BfXmpGNg1GRkr8XXa0Dtx42-2BYYp6U-3D">
+                                            <img src=3D"https://storage.goo=
+gleapis.com/contentgrid-active/hdus/en_US/DTCCOMNEW/fetch/EmailTemplates/im=
+ages/marketing-top.jpg"
+                                                 style=3D"display:block;" w=
+idth=3D"600" height=3D"70" border=3D"0" class=3D"UIM1" />
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </td>
+                </tr>
+            </table>
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" width=
+=3D"100%">
+                <tr>
+                    <td valign=3D"top" align=3D"right" style=3D"width:50%">
+                        <!--SBOTD / MOBILEALERTS / SPECIAL OFFERS PODS-->
+
+                        <table cellpadding=3D"0" cellspacing=3D"0" border=
+=3D"0" width=3D"300" align=3D"left" class=3D"appliance_offer_pod container"=
+>
+
+                            <tr>
+                                <td align=3D"left" valign=3D"top" width=3D"=
+100%" height=3D"20" style=3D"border-collapse:collapse; mso-table-lspace: 0p=
+t; mso-table-rspace: 0pt; mso-line-height-rule: exactly; line-height: 20px;=
+">
+                                    <!--[if gte mso 15]>&nbsp;<![endif]-->
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align=3D"left" valign=3D"top">
+                                    <table cellspacing=3D"0" cellpadding=3D=
+"0" border=3D"0" width=3D"100%">
+                                        <tr>
+                                            <td background=3D"https://stora=
+ge.googleapis.com/contentgrid-active/hdus/en_US/DTCCOMNEW/fetch/EmailTempla=
+tes/images/marketing_sbotd_300x150.jpg" style=3D"background-size:295px 150p=
+x; background-repeat:no-repeat;"
+                                                width=3D"300" height=3D"150=
+" align=3D"left" valign=3D"top" bgcolor=3D"#ffffff" class=3D"appliance_offe=
+r_pod_img">
+
+                                                <div>
+                                                    <table cellspacing=3D"0=
+" cellpadding=3D"0" border=3D"0" width=3D"100%">
+                                                        <tr>
+                                                            <td align=3D"le=
+ft" valign=3D"top">
+                                                                <!--add con=
+tent tables here-->
+                                                                <a target=
+=3D"_blank" href=3D"https://link.order.homedepot.com/ls/click?upn=3Du001.zY=
+Miv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHGWV3D2OYbZCN-2B6JPXc-2BG3yRz37J=
+ek0Cwb4HICOsDqu-2BRpvWnX9wdceAsiE6GD0uGtCEz4aYWp9Fal3SzhFR5B3ejwV2Djr29oUkb=
+OFYJn1-2FfolI8IoXMexK5asQPDJV5H3-2FbOnjSVSSz-2Bk0geIGW0ehxZo1kWfT7Alhr-2F0e=
+FQq9bCEZRXIOgVfd2WlBX5MJuxJkgqBqzlvkppxJRCFyyyrzuk-2FM4AE8wXnH9EGcKkOSQ-3D-=
+3DARpB_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2B=
+Yq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uv=
+IzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWi=
+V-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZw=
+zEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7=
+HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2F=
+LRIW-2BfIg5GCzem5K404TkqUfXZ4RbzWb2RGs-2BlZFRYzf1XohWrLxHec0LRgUIXEtoimKqno=
+lVhp3Sax1HJ5VsdJbtWAB8U-2FFWVCv3F3EbH23MfLflNEAIu4PoRApsKOeZrWiTOKbuYVIsDXj=
+Jht-2BES1RgfloKSaNxdhwFHV-2F2jzx6Mrpu6zCPDCiwX0k5mkosw-3D">
+                                                                    <img sr=
+c=3D"https://storage.googleapis.com/contentgrid-active/hdus/en_US/DTCCOMNEW=
+/fetch/EmailTemplates/images/marketing_sbotd_300x150.jpg"
+                                                                         st=
+yle=3D"display:block;" width=3D"295" height=3D"150" border=3D"0" class=3D"a=
+ppliance_offer_pod_img" />
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>
+                                                &nbsp;
+                                            </td>
+                                        </tr>
+                                        <tr>
+
+                                            <td background=3D"https://stora=
+ge.googleapis.com/contentgrid-active/hdus/en_US/DTCCOMNEW/fetch/EmailTempla=
+tes/images/marketing-five.jpg" style=3D"background-size:295px 150px; backgr=
+ound-repeat:no-repeat;"
+                                                width=3D"300" height=3D"150=
+" align=3D"left" valign=3D"top" bgcolor=3D"#ffffff" class=3D"appliance_offe=
+r_pod_img">
+                                                <div>
+                                                    <table cellspacing=3D"0=
+" cellpadding=3D"0" border=3D"0" width=3D"100%">
+                                                        <tr>
+                                                            <td align=3D"le=
+ft" valign=3D"top">
+                                                                <!--add con=
+tent tables here-->
+                                                                <a target=
+=3D"_blank" href=3D"https://link.order.homedepot.com/ls/click?upn=3Du001.zY=
+Miv-2BQD4Sp5WnWzM44zM2lrLm62YBdBcwL0UTzwawCDU-2B9vV-2F2sbuCWnJCRvDo5G9ytWd6=
+CqnS9S-2Bqn2Y61es2nV9jgZDGpnjCz7drH9rcBijsktpS1co-2FP7cGToA9teKO4iWc4ztRGrD=
+0ROI9nfkhR3ROMwDnKzJ9TBnROdWrQZQ1mbUrk1oe6aMsHo-2F3WDOscuzB9wcKz-2FbIxxcdX0=
+SXj2Aq5v0aRweWh424vAFNDLFxggy677OX-2FwPcA1vhuyrgz_W9FaNzDNe6tRLbc0stba1A1OR=
+kjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D=
+5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGe=
+owQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ=
+73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPd=
+pD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL=
+20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUlKlZxND=
+Z93aWRag0KyycRgkQ6g8wnFj6n3paFuf7PKt8YfVEaNbKakGuZfeurT1-2BzePy9FWpTV-2FZc5=
+zezMMRd4f9iyBvLEqPX5-2F7GydUv6Ul5LaBfd6EnnPgmeiQ4-2BBhJRKvxBzTf8bD1oadORkaY=
+Eal-2BgVNAkwXGo038YvUWeQ-3D">
+                                                                    <img sr=
+c=3D"https://storage.googleapis.com/contentgrid-active/hdus/en_US/DTCCOMNEW=
+/fetch/EmailTemplates/images/marketing-five.jpg"
+                                                                         st=
+yle=3D"display:block;" width=3D"295" height=3D"150" border=3D"0" class=3D"a=
+ppliance_offer_pod_img" />
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                &nbsp;
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td background=3D"https://stora=
+ge.googleapis.com/contentgrid-active/hdus/en_US/DTCCOMNEW/fetch/EmailTempla=
+tes/images/marketing-special.jpg" style=3D"background-size:295px 150px; bac=
+kground-repeat:no-repeat;"
+                                                width=3D"300" height=3D"150=
+" align=3D"left" valign=3D"top" bgcolor=3D"#ffffff" class=3D"appliance_offe=
+r_pod_img">
+                                                <div>
+                                                    <table cellspacing=3D"0=
+" cellpadding=3D"0" border=3D"0" width=3D"100%">
+                                                        <tr>
+                                                            <td align=3D"le=
+ft" valign=3D"top">
+                                                                <!--add con=
+tent tables here-->
+                                                                <a target=
+=3D"_blank" href=3D"https://link.order.homedepot.com/ls/click?upn=3Du001.zY=
+Miv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHHK-2BWOktZE7S3IqcXjTfQ5lVtew5W5=
+y3wCBLmovAOrLGXwz7SDq7W-2B94ouUHD6qT8-2B2lx6mQaGl2X3b-2FO7DaMRXiyNxC-2F4zkn=
+-2BIiXVYnL6jBOumrKrW2W1wI8lsfrCpZE0C0XE8Hqc-2BI-2BhvoV13TFc0uaqDLbKXhZIxxJY=
+-2BmtXqXSAx-2FGA68ODZEXQ-2BhCk45HEJZKibxVZwrOt-2Bs4cTSsaO92Vv_W9FaNzDNe6tRL=
+bc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYp=
+gOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp=
+1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-=
+2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL=
+6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbau=
+YaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K40=
+4TkqU3r6j66RsuAfmBhgBwrZ2KV-2F504MiwkXc6VpP7-2FQsJM0-2FvdlnhwLzFx9EyaZ7kRoa=
+bMIr-2F1QmwS0gTBiYeiGaAUNd8yLBYV8S7yBnQOHMbwkoe1I1TWyZROyCXP4hf3S-2Bo5-2BdI=
+vaRceWYTzXTcmhEjxWHaHMbSasR-2BFv4-2FMtmtvw-3D">
+                                                                    <img sr=
+c=3D"https://storage.googleapis.com/contentgrid-active/hdus/en_US/DTCCOMNEW=
+/fetch/EmailTemplates/images/marketing-special.jpg"
+                                                                         st=
+yle=3D"display:block;" width=3D"295" height=3D"150" border=3D"0" class=3D"a=
+ppliance_offer_pod_img" />
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td >
+                        <br/>
+                        <table >
+                            <tr>
+                                <td class=3D"darkmode_text" style=3D"paddin=
+g:0px 20px 7px 30px;">
+                                    <b> YOU MIGHT ALSO LIKE</b>
+                                    <br/>
+                                </td>
+                            </tr>
+                           =20
+    <tr>
+        <td background=3D"https://storage.googleapis.com/contentgrid-active=
+/hdus/en_US/DTCCOMNEW/fetch/EmailTemplates/images/static-recomendations-1.j=
+pg" style=3D"background-size:295px 115px; background-repeat:no-repeat;"
+            width=3D"300" height=3D"115" align=3D"left" valign=3D"top" bgco=
+lor=3D"#ffffff" class=3D"appliance_offer_pod_img">
+            <div>
+                <table cellspacing=3D"0" cellpadding=3D"0" border=3D"0" wid=
+th=3D"100%">
+                    <tr>
+                        <td align=3D"left" valign=3D"top">
+                            <!--add content tables here-->
+                            <a target=3D"_blank" href=3D"https://link.order=
+.homedepot.com/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKon=
+knrGUHEYsZng0gnLMY5P8dYPtT8vVghHN0NbBOa9lJQZ5-2FEBNMnR-2F7IzDCV437bvzotqhXx=
+9vqICgW7bnOSyc3Jr8MmX2phepXgMXFXcFcj0eIPfjOFi0S4Uiea70zSzFcD2bQX-2Bft0ZaSO3=
+bqB2Tu2O97wQcQcU-2BXwMh59dRRiFYA8StlprKIJxNM6g7N901dH25DyfjW08-2FITVF8xMkKZ=
+9z1ON8ViiQwemaJ9SUWs5ONGOxhfgY12WdTJpXbzp1oIKMHvypBoPn5Gv4bzxukvscVP2KmJz3h=
+q-2B0QhHogvMdt9LC8OJTbPy0sFE0adur7Nyk0ck-2BayPl7sJuEtget-2B434yvCdpd_W9FaNz=
+DNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY=
+1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAj=
+mfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51On=
+qz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIs=
+qSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDX=
+RSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GC=
+zem5K404TkqUeUuoTB2e6BjAwIAxPnHxoYdVut4oMfo-2B1G5HRdK0oo1UmRwZxa-2BXdUiAEJz=
+sLrG9MTkTVWCiTT8CTTKp7JAAexXuAEBfYFo4fu2cbxBddyOE-2B0yoNfG3HNGQ4XpQd3XLRqLo=
+gSHJ7s26-2FPqlr50hEv-2FxK4AJEKiHddEACjaD8OE-3D">
+                                <img src=3D"https://storage.googleapis.com/=
+contentgrid-active/hdus/en_US/DTCCOMNEW/fetch/EmailTemplates/images/static-=
+recomendations-1.jpg"
+                                     style=3D"display:block;" width=3D"300"=
+ height=3D"115" border=3D"0" class=3D"appliance_offer_pod_img" />
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td background=3D"https://storage.googleapis.com/contentgrid-active=
+/hdus/en_US/DTCCOMNEW/fetch/EmailTemplates/images/static-recomendations-5.j=
+pg" style=3D"background-size:295px 115px; background-repeat:no-repeat;"
+            width=3D"300" height=3D"115" align=3D"left" valign=3D"top" bgco=
+lor=3D"#ffffff" class=3D"appliance_offer_pod_img">
+            <div>
+                <table cellspacing=3D"0" cellpadding=3D"0" border=3D"0" wid=
+th=3D"100%">
+                    <tr>
+                        <td align=3D"left" valign=3D"top">
+                            <!--add content tables here-->
+                            <a target=3D"_blank" href=3D"https://link.order=
+.homedepot.com/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKon=
+knrGUHEjolwVmW14Et48wBaIvEvJ13MmsaM3aHE3JTqjuh-2FdtK4FsccM8IfPhN1o5WF4ym1Eo=
+R8fjwxFO529C711LBrX3F4N492a4q9x6ef7My8RfFjmWPUPWu61vVWi4M1nzX-2F9YYauVpuepL=
+2dPAGgG1DxgUxFDHGlXybXiFVbiRkReW-2BDIqWVmrR926elJuTG57bOQaFdus3CvFu9GNLqzIN=
+5I0NyoQKjsWqGurwflPp6YSAk2cWy4cYVQp8AWu5RsmbIYR-2F-2BQP0Hmj2pGx1i8v0hjJtmOp=
+AdyyBmqnYuVu29-2Bh71yCEl1omx-2BlEeQjbVnLYzGx4FUOI7LlNAwFoE4pn7UPIB_W9FaNzDN=
+e6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m=
+1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmf=
+zJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz=
+-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqS=
+wI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRS=
+IRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCze=
+m5K404TkqUx0ReKscqzrR0wBr0uBYkFIG76YucpDA1uk50uEtP59xCgV3k4yUf6lmdQaxaz4lNu=
+5W1AgTxY-2B8UsSkbrqWbTee-2BG1ZImgROzRi4b6CLXolLnYrSOeHHf6rB4R9RnED3ow8P6kOp=
+ir4VnLaz0Pf-2FwVNQ7p8BjAjPWp0CwyKzX4s-3D">
+                                <img src=3D"https://storage.googleapis.com/=
+contentgrid-active/hdus/en_US/DTCCOMNEW/fetch/EmailTemplates/images/static-=
+recomendations-5.jpg"
+                                     style=3D"display:block;" width=3D"300"=
+ height=3D"115" border=3D"0" class=3D"appliance_offer_pod_img" />
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td background=3D"https://storage.googleapis.com/contentgrid-active=
+/hdus/en_US/DTCCOMNEW/fetch/EmailTemplates/images/static-recomendations-3.j=
+pg" style=3D"background-size:295px 115px; background-repeat:no-repeat;"
+            width=3D"300" height=3D"115" align=3D"left" valign=3D"top" bgco=
+lor=3D"#ffffff" class=3D"appliance_offer_pod_img">
+            <div>
+                <table cellspacing=3D"0" cellpadding=3D"0" border=3D"0" wid=
+th=3D"100%">
+                    <tr>
+                        <td align=3D"left" valign=3D"top">
+                            <!--add content tables here-->
+                            <a target=3D"_blank" href=3D"https://link.order=
+.homedepot.com/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKon=
+knrGUHEsxwxpZe1IXJDDoZFmhZFhwzShRI70jMQkr3FEkVS7yHTb2-2FmGglJR329nZsVX24i0G=
+sTDHArTc9tVw3mcRdOtzXnfFs3smDhDq9GtWOJtD529jNuBkMW0KWtKRjUGJUKQ6xKndDUGprn0=
+CwqhfX7SHr-2BO4D8DVuUo-2BB1GW9-2BEKGvaPhyer0wUjg-2FxRw9i4lB4pZBpfuQS1upNYMd=
+kRQNmxkSN35gPT18ZBo2LPRfVGTpbuHKYCG0OPnTzcpgFgibThoXD9N26MCb0nsLgo5Xcq8YDM0=
+uqSIqbP51tX8oCBF-2BSxKnpB7k6V0kQl0nfamKl99Zwaeu6obXsY-2BbC2h8pLY8KunYNsvL33=
+vVhQK0zlg-3D-3DdhEr_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLc=
+b41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY=
+6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2B=
+H23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZi=
+aU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqC=
+Unf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKO=
+L5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUVb7tx-2BM70E2gZGNA8OJZwwsuDk-2Fb6uBQt=
+jVGMe1IqTYIjH-2FJZyi9QwGDEb3HDZ6wMMCenFZfr3dWdYeRAnX3VjU0R1443hTqxVRaEXyYvS=
+ek2gxOw9vKxkgrkKvkFQh4stwn8uMG1KvQyUlfKpHf7Rgzz4cP6FcBTxf8HHmyq1A-3D">
+                                <img src=3D"https://storage.googleapis.com/=
+contentgrid-active/hdus/en_US/DTCCOMNEW/fetch/EmailTemplates/images/static-=
+recomendations-3.jpg"
+                                     style=3D"display:block;" width=3D"300"=
+ height=3D"115" border=3D"0" class=3D"appliance_offer_pod_img" />
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td background=3D"https://storage.googleapis.com/contentgrid-active=
+/hdus/en_US/DTCCOMNEW/fetch/EmailTemplates/images/static-recomendations-4.j=
+pg" style=3D"background-size:295px 115px; background-repeat:no-repeat;"
+            width=3D"300" height=3D"115" align=3D"left" valign=3D"top" bgco=
+lor=3D"#ffffff" class=3D"appliance_offer_pod_img">
+            <div>
+                <table cellspacing=3D"0" cellpadding=3D"0" border=3D"0" wid=
+th=3D"100%">
+                    <tr>
+                        <td align=3D"left" valign=3D"top">
+                            <!--add content tables here-->
+                            <a target=3D"_blank" href=3D"https://link.order=
+.homedepot.com/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKon=
+knrGUHEw4GzNkhHw-2BtKV7kqiF7jOFpvjkWxYSF5feK96OEBQmCmbVFnARwuCXanX8v1cFX4JL=
+nAgHl4w75jwbkWEsbl47Iskmh7TCOjT140lZlB2M83cHDIVdJUgrhjmZiSAZvyVeiv03q74-2FP=
+lGRCQXV0YQdTM03qqS-2BqjrlIFAbVhIAcsp16Bffx58bBqK9jl68S8adpMbvr5Pufj4INnQT-2=
+BfWfpeUhctWv94pH4-2BBa5RuOeW50MNGRxlr5IPBJWjl5Am9tTFSwusCFYOx2YzOVxLrpbrwRc=
+-2F-2BMsglIDFQ2grFmqogizl3CA8sCUh7GM0wvQB6h6GPI-2F1tDPVxE8AGatjfm1YK_W9FaNz=
+DNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY=
+1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAj=
+mfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51On=
+qz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIs=
+qSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDX=
+RSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GC=
+zem5K404TkqUGm1wSBsHzFc4Qy4D16gmOSAI5wNfkozJzAl6HCTyEOEZdeXJLsWNGuah6XzST2C=
+FNEX55lSLVbrkoaTGUWxV3gmWbfoO2-2B0t10TOkjYHj3dxWepMT49EGufQm164sr2CBXNPLTi-=
+2F1Vzyl-2F7x5IlHIQgwoeK6OC-2BkPF1WqweT-2FH8-3D">
+                                <img src=3D"https://storage.googleapis.com/=
+contentgrid-active/hdus/en_US/DTCCOMNEW/fetch/EmailTemplates/images/static-=
+recomendations-4.jpg"
+                                     style=3D"display:block;" width=3D"300"=
+ height=3D"115" border=3D"0" class=3D"appliance_offer_pod_img" />
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </td>
+    </tr>
+
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+
+    </tr>
+</table>
+
+<!--[if !mso]><!-->
+<table class=3D"marketing-info visible_mobile_view mobile" style=3D"display=
+:none;max-height:0px;overflow:hidden;" border=3D"0" width=3D"100%" cellpadd=
+ing=3D"0" cellspacing=3D"0">
+    <tr>
+        <td width=3D"10%" style=3D"padding-top:30px;">
+            <div class=3D"marketing-mobile-view mobile">
+                <a target=3D"_blank" href=3D"https://link.order.homedepot.c=
+om/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM9Z5-2FuQ9Q-2FdXkKY1GoZW80K0no=
+hKCGt59R6W3a1jVTDjUQGljzC6BHMH6HsuM14TbT5oiEdp2u3IJ1HI5KnL4x5uJsKF6lmrjDK7U=
+KdEoT0cy0n78c9frUvnBKNcRZQ1NmIX7iXCPu-2Bf0MiL-2FeUGPDTNoi8bGWdyU9VbKeQ0jD-2=
+FtruBH9PkHfzV85W-2BFXrcfedpSA0BiqRonugQjd9jfu1xca-2F87MWCoUs-2F2lb6xbk-2BMB=
+sNRn6ARq-2Fw3ytyDNH3WBw-3D-3DGksV_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Oge=
+snk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M=
+1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39=
+zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlc=
+Xx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk=
+7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fu=
+x8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUYfyWPoQE36E58EwUcEBZ6EY=
+uopDo5oSyqPjJ0Wr0l2ZQuxtXtiUeOLHACBnnQC-2BaQu8YT0tSGrDfmUMsmL-2F-2FA45OVcGT=
+FVRNlyhHZeFDtn6SyTP1aOh6LRHZjvsKv3OPFmaw2ewB2WP52WhTXD25-2BqjVZ4IK4BSjbM-2F=
+5JIVgYm4-3D">
+                    <img src=3D"https://storage.googleapis.com/contentgrid-=
+active/hdus/en_US/DTCCOMNEW/fetch/EmailTemplates/images/marketing-top.jpg" =
+style=3D"display:block;border: 1px solid #eaeaea" width=3D"100%"  class=3D"=
+appliance_banner" border=3D"0"/>
+                </a>
+                <br/>
+
+                <a target=3D"_blank" href=3D"https://link.order.homedepot.c=
+om/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHGWV3D2=
+OYbZCN-2B6JPXc-2BG3yRz37Jek0Cwb4HICOsDqu-2BRpvWnX9wdceAsiE6GD0uGtCEz4aYWp9F=
+al3SzhFR5B3ejwV2Djr29oUkbOFYJn1-2FfolI8IoXMexK5asQPDJV5H3-2FbOnjSVSSz-2Bk0g=
+eIGW0ehxZo1kWfT7Alhr-2F0eFQq9bCEZRXIOgVfd2WlBX5MJuxJkgqBqzlvkppxJRCFyyyrzuk=
+-2FM4AE8wXnH9EGcKkOSQ-3D-3DFi4J_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesn=
+k8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1I=
+GEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zf=
+aXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx=
+6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7E=
+lqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8=
+GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUK1n0EA4x99605oE6qgmjVEyOw=
+c3FZHyhBc6qgStgpyU8CBUeeS5F4sc7oMiUF2l2XJf3Fde-2Fmd2EJ3TdcCPQEpWoi9ODWVtZv1=
+Pj8qcXaisGLOnV2rQahcqklvjBv7xfPh9zgZkCTbmXEpRVfC6n1atFNJ-2FmYryYk2DQlOrj-2F=
+As-3D">
+                    <img src=3D"https://storage.googleapis.com/contentgrid-=
+active/hdus/en_US/DTCCOMNEW/fetch/EmailTemplates/images/marketing_sbotd_300=
+x150.jpg" style=3D"display:block;" width=3D"100%" height=3D"" border=3D"0" =
+class=3D"appliance_offer_pod_img"/>
+                </a>
+                <br/>
+
+                <a target=3D"_blank" href=3D"https://link.order.homedepot.c=
+om/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM2lrLm62YBdBcwL0UTzwawCDU-2B9v=
+V-2F2sbuCWnJCRvDo5G9ytWd6CqnS9S-2Bqn2Y61es2nV9jgZDGpnjCz7drH9rcBijsktpS1co-=
+2FP7cGToA9teKO4iWc4ztRGrD0ROI9nfkhR3ROMwDnKzJ9TBnROdWrQZQ1mbUrk1oe6aMsHo-2F=
+3WDOscuzB9wcKz-2FbIxxcdX0SXj2Aq5v0aRweWh424vAFNDLFxggy677OX-2FwPcA1vhucROy_=
+W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-=
+2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYR=
+Cn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA=
+6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS0=
+8r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG=
+7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2B=
+fIg5GCzem5K404TkqUIDP34xiDmXvAcslnxq1218SIhXwhzi1tVJ-2Bwf1bDCMBD-2B5WnXn8IB=
+mC9JMUNY4b68Ee7jwqVv4IZg-2Fl5dREO14oWZESlddzD-2F2GTshZXszv8MPfYs52abskeu9oO=
+-2Bm-2B0kig1ogWPKBKZ68NDH9ZPDNk0qQmE0OA4f5eo7lxY9h4-3D">
+                    <img src=3D"https://storage.googleapis.com/contentgrid-=
+active/hdus/en_US/DTCCOMNEW/fetch/EmailTemplates/images/marketing-five.jpg"=
+ style=3D"display:block;" width=3D"100%" height=3D"" border=3D"0" class=3D"=
+appliance_offer_pod_img"/>
+                </a>
+                <br/>
+
+                <a target=3D"_blank" href=3D"https://link.order.homedepot.c=
+om/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHHK-2BW=
+OktZE7S3IqcXjTfQ5lVtew5W5y3wCBLmovAOrLGXwz7SDq7W-2B94ouUHD6qT8-2B2lx6mQaGl2=
+X3b-2FO7DaMRXiyNxC-2F4zkn-2BIiXVYnL6jBOumrKrW2W1wI8lsfrCpZE0C0XE8Hqc-2BI-2B=
+hvoV13TFc0uaqDLbKXhZIxxJY-2BmtXqXSAx-2FGA68ODZEXQ-2BhCk45HEJZKibxVZwrOt-2Bs=
+4cTSsaOXluO_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9=
+UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJH=
+Kq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya=
+17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9g=
+DSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uG=
+VDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQ=
+yz-2FLRIW-2BfIg5GCzem5K404TkqUymc85JXfmjKYFH28XV-2FgB5EnKPom4dCFTXtE8XawpgE=
+-2F5eg6QG4qCjdgtzTgqjRQMXdHup-2FleROhDR3mYMVDSSArWcTKx-2B8OQOdn4bWdUREcKjQb=
+SY9Nf5OGY59XqrOXXyB4ZSjk3FLDkUugz-2B20wCtv1RgzykymPx2aZnSicH8-3D">
+                    <img src=3D"https://storage.googleapis.com/contentgrid-=
+active/hdus/en_US/DTCCOMNEW/fetch/EmailTemplates/images/marketing-special.j=
+pg" style=3D"display:block;" width=3D"100%"  border=3D"0" class=3D"applianc=
+e_offer_pod_img"/>
+                </a>
+                <br/>
+                <br/>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class=3D"darkmode_text" width=3D"10%" style=3D"padding-top:20px=
+;">
+            <div style=3D"padding:10px 20px 10px 20px;text-align: center">
+                <b> YOU MIGHT ALSO LIKE</b>
+            </div><br/>
+            <div class=3D"marketing-mobile-view mobile">
+               =20
+    <a target=3D"_blank" href=3D"https://link.order.homedepot.com/ls/click?=
+upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHEYsZng0gnLMY5P8dYP=
+tT8vVghHN0NbBOa9lJQZ5-2FEBNMnR-2F7IzDCV437bvzotqhXx9vqICgW7bnOSyc3Jr8MmX2ph=
+epXgMXFXcFcj0eIPfjOFi0S4Uiea70zSzFcD2bQX-2Bft0ZaSO3bqB2Tu2O97wQcQcU-2BXwMh5=
+9dRRiFYA8StlprKIJxNM6g7N901dH25DyfjW08-2FITVF8xMkKZ9z1ON8ViiQwemaJ9SUWs5ONG=
+OxhfgY12WdTJpXbzp1oIKMHvypBoPn5Gv4bzxukvscVP2KmJz3hq-2B0QhHogvMdt9LC8OJTbPy=
+0sFE0adur7Nyk0ck-2BayPl7sJuEtget-2B434yv6yqu_W9FaNzDNe6tRLbc0stba1A1ORkjODX=
+Uw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOh=
+PolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBH=
+hPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4=
+ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rF=
+X8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVe=
+kWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUYMhkFUV0Sh3R=
+5yekDASy8Xfpx0Zv5k2AFKJ-2B-2BlwtW6jkLxbxqYSWRQ2uvTS-2B0BJFufvMKb9x8AP-2B48l=
+KmhNzVnixBHqqYrDU26xXaHQUeuWTUEMOCAhSBUyJguNnLKulSPlVrapmMtfklK0mslW-2FtENo=
+9EA3nAEWLIJGoguvRfo-3D">
+        <img src=3D"https://storage.googleapis.com/contentgrid-active/hdus/=
+en_US/DTCCOMNEW/fetch/EmailTemplates/images/static-recomendations-1.jpg" st=
+yle=3D"display:block;" width=3D"100%" height=3D"" border=3D"0" class=3D"app=
+liance_offer_pod_img"/>
+    </a>
+    <br/>
+
+    <a target=3D"_blank" href=3D"https://link.order.homedepot.com/ls/click?=
+upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHEjolwVmW14Et48wBaI=
+vEvJQkPpiPZ0DW5CX6hxMrb4cSDlgcIIUiBKTqsRLgi7SRnq3XPUp0hzU-2BtUT-2BoAc5JSLFj=
+M1KzkfSPp1d6AYRdjdU1Zdwzwcm1GwiIGZWvxnat5c4EzgSBNLMPi9BX6ON-2FTUHurXPc7CmrW=
+fBa3xc3m9z0-2Bo7E7PU-2BOu2oeihKgtzJUOuv0jxcT7DFmZfAou5lmvdIJ6TBb6y2jf6LgNs-=
+2BUhGHFsxTFT4R8Ci0woxVeE0aTkS0-2FddjhkiV9pBhMlcHOxIbZAswLvCRceqwx5PmWWdPMF2=
+C-2B1ILXlpyWhPqosHB8m2wt5NZWY7jBpo6BPBjIHM7s_W9FaNzDNe6tRLbc0stba1A1ORkjODX=
+Uw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOh=
+PolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBH=
+hPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4=
+ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rF=
+X8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVe=
+kWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUIipGjzDr7h3U=
+MMp02wFgpvcTgglIvdPMnvq0JIBkhZqr4HYGscp68h5HSYd4hYlwuRm6iE7t447J3YttyOUOODp=
+zMryPa9l8FNtVuqemLUvHpH54lUhL-2B5OKeJKiOnlcSqO6jT1tQLwwIHWPYRBB07W2VxN1asJP=
+3hOflxREzsQ-3D">
+        <img src=3D"https://storage.googleapis.com/contentgrid-active/hdus/=
+en_US/DTCCOMNEW/fetch/EmailTemplates/images/static-recomendations-5.jpg" st=
+yle=3D"display:block;" width=3D"100%" height=3D"" border=3D"0" class=3D"app=
+liance_offer_pod_img"/>
+    </a>
+    <br/>
+
+    <a target=3D"_blank" href=3D"https://link.order.homedepot.com/ls/click?=
+upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHEsxwxpZe1IXJDDoZFm=
+hZFhwzShRI70jMQkr3FEkVS7yHTb2-2FmGglJR329nZsVX24i0GsTDHArTc9tVw3mcRdOtzXnfF=
+s3smDhDq9GtWOJtD529jNuBkMW0KWtKRjUGJUKQ6xKndDUGprn0CwqhfX7SHr-2BO4D8DVuUo-2=
+BB1GW9-2BEKGvaPhyer0wUjg-2FxRw9i4lB4pZBpfuQS1upNYMdkRQNmxkSN35gPT18ZBo2LPRf=
+VGTpbuHKYCG0OPnTzcpgFgibThoXD9N26MCb0nsLgo5Xcq8YDM0uqSIqbP51tX8oCBF-2BSxKnp=
+B7k6V0kQl0nfamKl99Zwaeu6obXsY-2BbC2h8pLY8KunYNsvL33vVhQK0zlg-3D-3DWq_t_W9Fa=
+NzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4r=
+nY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9N=
+AjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51=
+Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5V=
+IsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrY=
+DXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5=
+GCzem5K404TkqUFm58sy8UKrHHMoWhGi28XOLoullObRCHKkqkqSYpHPGnYig4lhsbkI1kNmNhW=
+YAKsonZYKGp1hlRkrUbTQ3WBjjfPLgfnf5eixZ3yoRdBJwBxLEVL7rYGY2hiHT5fB45oSF7EL9o=
+IUuNdblejeG7WOkF1jnnEEgIk8H71s6UooI-3D">
+        <img src=3D"https://storage.googleapis.com/contentgrid-active/hdus/=
+en_US/DTCCOMNEW/fetch/EmailTemplates/images/static-recomendations-3.jpg" st=
+yle=3D"display:block;" width=3D"100%" height=3D"" border=3D"0" class=3D"app=
+liance_offer_pod_img"/>
+    </a>
+    <br/>
+
+    <a target=3D"_blank" href=3D"https://link.order.homedepot.com/ls/click?=
+upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHEw4GzNkhHw-2BtKV7k=
+qiF7jOFpvjkWxYSF5feK96OEBQmCmbVFnARwuCXanX8v1cFX4JLnAgHl4w75jwbkWEsbl47Iskm=
+h7TCOjT140lZlB2M83cHDIVdJUgrhjmZiSAZvyVeiv03q74-2FPlGRCQXV0YQdTM03qqS-2Bqjr=
+lIFAbVhIAcsp16Bffx58bBqK9jl68S8adpMbvr5Pufj4INnQT-2BfWfpeUhctWv94pH4-2BBa5R=
+uOeW50MNGRxlr5IPBJWjl5Am9tTFSwusCFYOx2YzOVxLrpbrwRc-2F-2BMsglIDFQ2grFmqogiz=
+l3CA8sCUh7GM0wvQB6h6GPI-2F1tDPVxE8AGatjf0k_S_W9FaNzDNe6tRLbc0stba1A1ORkjODX=
+Uw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOh=
+PolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBH=
+hPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4=
+ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rF=
+X8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVe=
+kWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqU72J7mUwEEtHj=
+We5I6JdVZWR-2BgaabuLaQm94t004hvyiVPsFoYoAQTHiCVMuC4hpRavXX4jKNuZjzui7hArm4V=
+4at6fs8TVef85PNxoDdyBBaXwNw-2B8vN3lyB1Cc0Jl-2Bxz6z8G7A1iBenUtgOTvTGosJG6lCU=
+UV8fujhKwuc65EQ-3D">
+        <img src=3D"https://storage.googleapis.com/contentgrid-active/hdus/=
+en_US/DTCCOMNEW/fetch/EmailTemplates/images/static-recomendations-4.jpg" st=
+yle=3D"display:block;" width=3D"100%"  border=3D"0" class=3D"appliance_offe=
+r_pod_img"/>
+    </a>
+    <br/>
+
+    <br/>
+
+            </div>
+
+        </td>
+    </tr>
+</table>
+<!--<![endif]-->
+
+                        <!-- End Markerting Info -->
+                    </td><td class=3D"hide_mobile_view">&nbsp;&nbsp;</td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <!-- Start Footer -->
+                       =20
+
+   =20
+        <table class=3D"footer-container" border=3D"0" cellpadding=3D"0" ce=
+llspacing=3D"0" width=3D"100%">
+    <tbody>
+   =20
+    <tr>
+        <td valign=3D"top" align=3D"left" style=3D"padding: 20px 0;">
+            <table border=3D"0" width=3D"100%" cellpadding=3D"0" cellspacin=
+g=3D"0" style=3D"background:#eee">
+  <tr>
+    <td style=3D"color:#333;font-size:14px;line-height:21px;background:#eee=
+;padding:10px 22px 15px 22px;text-align:center">
+      <span style=3D"font-size:14px;line-height:21px;">For questions about =
+your order, </span>
+          <b>
+    <a class=3D"no-text-link" target=3D"_blank" style=3D"text-decoration:no=
+ne;color:#333;" href=3D"sms:38698">
+      text us at <span style=3D"display:inline-block;font-size:14px;line-he=
+ight:21px;">38698.</span>
+    </a>
+  </b> Text support is available 24/7.
+    <br>
+    You may also <b>
+    <a class=3D"no-text-link" target=3D"_blank" style=3D"text-decoration:no=
+ne;color:#333;" href=3D"tel:800-430-3376">
+      call us at <span style=3D"display:inline-block;font-size:14px;line-he=
+ight:21px;">800-430-3376</span>
+    </a>
+  </b> from 6 AM - 2 AM ET, 7 days a week.
+    </td>
+  </tr>
+</table>
+
+        </td>
+    </tr>
+   =20
+    <tr>
+        <td valign=3D"top" align=3D"left">
+            <table border=3D"0" width=3D"100%" cellpadding=3D"0" cellspacin=
+g=3D"0">
+                <tbody>
+                <tr>
+                    <td valign=3D"top" align=3D"center">
+                        <table class=3D"follow-link" border=3D"0" cellpaddi=
+ng=3D"0" cellspacing=3D"0">
+                            <tr>
+                                <td valign=3D"middle" align=3D"left" style=
+=3D"padding:5px 20px 0px 0px">
+                                    <b style=3D"font-size:12px;color:#333;d=
+isplay:inline-block;"> FOLLOW US: </b>
+                                </td>
+                                <td style=3D"padding:0px 5px;" valign=3D"to=
+p" align=3D"left">
+                                    <a href=3D"https://link.order.homedepot=
+.com/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM5O3G0uLDlI6kY3xJS7kOpqHWAXk=
+-2FS1EgJZ38YUSXzA508doohIMfu2rKPBE-2FK-2FWypWKhtWUyZii0Ohr-2BrtbLmXS1pkngfE=
+FHC-2BfseZaqfZKyD1R-2F3R3oURzvMA1w8fi5F42hIQ6F3NAMUMZ9W5ynKaTm2RH55KUn7r9e3=
+ngEUswYDmljmep2WSr17frSwR6LgcH4RawoJS8YMRvLFEK2TU-3DnDy4_W9FaNzDNe6tRLbc0st=
+ba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXx=
+HexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOP=
+UNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI=
+5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLW=
+tpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWx=
+RuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqU=
+qA89aOVIxfClHt1ClRZfZjJ0jzaDrCvzItWf22F7UviIWrn0sierXzs28fYsJI7GHtFB9Jq0oXT=
+qYJ0kg6FNw0RXfOUQXeABbRkrZE2yRUCR6xkoVgHEsJ2yqJ6k3cfJk1CDEJnYi1vz5ZU8ieb1GD=
+xDDOT4k401-2Bh93i0YnDcw-3D"
+                                       target=3D"_blank" style=3D"display:i=
+nline-block;">
+                                        <img alt=3D"Fb" src=3D"https://stor=
+age.googleapis.com/contentgrid-active/hdus/en_US/DTCCOMNEW/fetch/EmailTempl=
+ates/images/facebook.png" width=3D"22"
+                                             height=3D"22" border=3D"0">
+                                    </a>
+                                </td>
+                                <td style=3D"padding:0px 5px;" valign=3D"to=
+p" align=3D"left">
+                                    <a href=3D"https://link.order.homedepot=
+.com/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM9T0c5Q-2FXAf0MKSDjMCpALoAW9=
+0Mh-2F9CnOyQjMDZeuFAevFZm37rY8BRbmR0-2FN7IhlyuRrLTTto7C-2FELpQymMqKtkleWRvx=
+OnIxBil-2FpUYCuxmmNvxztGajfCJiB14zFnJyXQf-2FgVT0trc-2BRoX5fHiBoquG1qMDhl9ZP=
+bUaT0WFKv6HVf8ohoE02dUFs1gWoDmamqVX5VqyE6d9oWV1rbn8-3Dc9Pb_W9FaNzDNe6tRLbc0=
+stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOI=
+XxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1Lu=
+OPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2=
+SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GH=
+LWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZ=
+WxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404Tk=
+qUFCgoINsd3KLgHOBwdBkdVyNS2Jga-2B-2FSm8rQxEOss0RY6M3160sra-2FL8MUg-2FpYr5tp=
+IJDmlHvcB30PsQ8u4cn9MkZzoUtgh3E5aH9929DKVy5SintoBiAYv9k2I7HUTXS4HpdwlGY-2FB=
+-2BTFqjaouB9ttLp3vxtZHp0Bk56ZoSajV4-3D"
+                                       target=3D"_blank" style=3D"display:i=
+nline-block;">
+                                        <img alt=3D"Tw" src=3D"https://stor=
+age.googleapis.com/contentgrid-active/hdus/en_US/DTCCOMNEW/fetch/EmailTempl=
+ates/images/Twitter_Icon_100x84.png" width=3D"25"
+                                             height=3D"22" border=3D"0">
+                                    </a>
+                                </td>
+                                <td style=3D"padding:0px 5px;" valign=3D"to=
+p" align=3D"left">
+                                    <a href=3D"https://link.order.homedepot=
+.com/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM95vFa36iAkkHQ3fRSykOuvAJoxM=
+ti4iSiWdxF-2BHbBpfzStMmay590ztWVhHuert-2FRezP83UQcGhIS9oedRTdy4ZYQiYKCBoyGL=
+NKrLUjpBiFymx5-2FkNtrlTyNhrjAb3Aq7K6aS10aCUA86mwyn3ivbPhvfbCX2ajf-2Bf1J-2FH=
+k5kAB-2Bh9X4fOxSsZ8pYVbMEn0oxecrzBmfPnCCxg8iVl0oI-3DoHsU_W9FaNzDNe6tRLbc0st=
+ba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXx=
+HexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOP=
+UNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI=
+5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLW=
+tpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWx=
+RuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqU=
+l5BoXzfE31gz-2FOCTYLoesGiBY35du8IIE5WuUivdL2oqjmk027GOKjUc6Wk5XafLFxzttwKLp=
+0qxs2wYdN0X6WQf8RUv8XjOdaJP3CSXYPdD0aHqXrm5WYQaSt-2FlNBEUOq5mCY1RVBh5Qye6Hq=
+FPu0iY7KqAiiaad5rL5H-2F078U-3D"
+                                       target=3D"_blank" style=3D"display:i=
+nline-block;">
+                                        <img alt=3D"YT" src=3D"https://stor=
+age.googleapis.com/contentgrid-active/hdus/en_US/DTCCOMNEW/fetch/EmailTempl=
+ates/images/youtube.png" width=3D"22"
+                                             height=3D"22" border=3D"0">
+                                    </a>
+                                </td>
+                                <td style=3D"padding:0px 5px;" valign=3D"to=
+p" align=3D"left">
+                                    <a href=3D"https://link.order.homedepot=
+.com/ls/click?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM0y86UIwQ1-2FMVBtfIzNmrLZzHr=
+fm37SJC7ql-2BjGNuQaa82GOnufM7VmJvlYtytTwunI4R-2FRbbhRS8TSmInqI4I0BoJ7esGVdO=
+wk4rdoYEHXhDitSjt3zONdESg-2FuWv5E8h-2BXqV0YOUbhONprGnlk83bv0YgohPpqhWEDsIvy=
+qOi4NuuzMylH97U6TuD6vV8gQtjaUn8s9r2ufl3Lb-2BumN8s-3De1_Y_W9FaNzDNe6tRLbc0st=
+ba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXx=
+HexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOP=
+UNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI=
+5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLW=
+tpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWx=
+RuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqU=
+L8WLUuuiqhNv6xz3R-2B4Yau0idIp4bvYhtaTMj3T5204au98z76nXwLYdOPzu6-2FzqYleHPaW=
+U4KkhIJQHpW8NfUk1xW2ma5fKFHp4cznbEkC2BGCOgd-2F-2FkSu4wMpvEKaCIk6J3d-2FUdnDo=
+nTOawMNzvdkMTXld-2BbsmHpwN11XYO0s-3D"
+                                       target=3D"_blank" style=3D"display:i=
+nline-block;">
+                                        <img alt=3D"Pin" src=3D"https://sto=
+rage.googleapis.com/contentgrid-active/hdus/en_US/DTCCOMNEW/fetch/EmailTemp=
+lates/images/pinterest.png" width=3D"22"
+                                             height=3D"22" border=3D"0">
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td valign=3D"top" align=3D"left" style=3D"padding: 20px 0px 0px 0;=
+">
+            <table border=3D"0" width=3D"100%" cellpadding=3D"0" cellspacin=
+g=3D"0">
+                <tbody>
+                <tr>
+                    <td valign=3D"top" align=3D"center">
+                        <div class=3D"no-reply" style=3D"line-height:18px;p=
+adding:0px 15px 0px 15px;color:#64635E;font-size:13px;">
+                            Please do not reply to this email. To ensure yo=
+u continue getting updates on your order,
+                            <br class=3D"br-sm" />add
+                            <a href=3D"mailto:homedepot@order.homedepot.com=
+" target=3D"_blank" class=3D"normal-link-view" style=3D"text-decoration:non=
+e;color:#3E7697;">
+                                homedepot@order.homedepot.com </a> to your =
+address book.
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td valign=3D"top" align=3D"center" style=3D"padding-to=
+p:20px">
+                        <div class=3D"copy-text mobile_container_space" sty=
+le=3D"font-size:11px;color:#64635E;line-height:18px;margin-bottom:20px;">
+                            &copy; 2026 Home Depot Product Authority, LLC. =
+All rights reserved.
+                            <br class=3D"br-sm"/> Local store prices may va=
+ry from those displayed. All offers may not be available in all areas.
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style=3D"padding-bottom:10px;">
+            <table class=3D"external-links hide_mobile_view" border=3D"0" w=
+idth=3D"100%" cellpadding=3D"0" cellspacing=3D"0">
+                <tbody>
+                <tr>
+                    <td valign=3D"center" style=3D"text-align:center;text-a=
+lign:center;">
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHFNAW-2FTcTrcl-2B=
+mVGINcWlqF0-2FCGzZXO0MXmrg0vmfGOau5mkPy4TN820e-2BB-2FmLzaOXEI9kq8gYeRq5pbCA=
+z1G9D-2FUjQWWj0kXNBkU92Co6GY2j4y9vgQ7VK06vTWbrw1ps7XP74t36ZaLCZivME64DM7DJl=
+-2BGCucDLCY23NBudB1ZRJgyVr7UkAXAqju0pVz-2Bs-3D0naO_W9FaNzDNe6tRLbc0stba1A1O=
+RkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87=
+D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREG=
+eowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNn=
+Z73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuP=
+dpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2Mh=
+L20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUxHHVGA=
+d-2FS7BYFwWyZCxn-2FvjUnwC0E8fLzVuwnIfbyokZqNHj-2B1Oz23CEfbGt4ZchGMozIRI0bap=
+M4Q3p5NfVGG-2FlynwfuNwBvT63gAUWoKrsjqK8-2BTUNHOmQhiqc62LB3Nj76rGVIUyJFnZpXE=
+uTB6LREFpRNuL-2Ft8LIXzA4Mk0-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#3E7697;font-size:13px;display:block;text-align:center;line-height:20=
+px;letter-spacing:.2px;">
+                            Privacy & Security Statement
+                        </a>
+                    </td>
+                    <td style=3D"text-align:center;padding:0px 4px;">
+                        <span class=3D"center-line" style=3D"display:block;=
+color:#B9B6B0;text-align:center;"> | </span>
+                    </td>
+                    <td valign=3D"center" style=3D"text-align:center;text-a=
+lign:center;">
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHHb53ZXH1yj9AWlur=
+QpNyVkI8nJ5oS5tqUB-2BImc510hRTvX91RXN4-2FpZXxPlpwvEcXua3-2BxMKetHM61d68OMTJ=
+bHLnqm-2Bqkv25IlkRy69uTbzL-2BI-2BhU8-2B93Hkt8tOdou9AxMWaCSBu6VhddktQJVELtLM=
+u8cAn0b08Rl9YLjedqy0M9cntQtc0b7i8qG1Zx1x4iEjy5b4yPkwKM9g7HBZxeCbSW_W9FaNzDN=
+e6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m=
+1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmf=
+zJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz=
+-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqS=
+wI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRS=
+IRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCze=
+m5K404TkqUNUAUScjTz579TXWJCl4FzjzmhLlRSuUHILJLjToi8mECi2Wx4qeecBvGHnC-2FUDR=
+hmsb9IyqoA8ALtagCXH9V-2FCfV5P8mtyWlqrF68lsPSW0j9jdn0Jum3HFEK0vV-2Bm70CmUIMe=
+dQtxxwexnVSXVWpz24fyhkrt8d9TLvuzTuiew-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#3E7697;font-size:13px;display:block;text-align:center;line-height:20=
+px;letter-spacing:.2px;">
+                            Return Policy
+                        </a>
+                    </td>
+                    <td style=3D"text-align:center;padding:0px 4px;">
+                        <span class=3D"center-line" style=3D"display:block;=
+color:#B9B6B0;text-align:center;"> | </span>
+                    </td>
+                    <td valign=3D"center" style=3D"text-align:center;text-a=
+lign:center;">
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHGcW1T8yh2wVHLRPw=
+t6O8jV10hJKIeJiRzY05Du2rBZKTDDe8re9sMzCW-2BK-2Fq-2FZrprldxkdMns-2BcYznPBKGo=
+ekwFRuFtFYYHY-2B2KYXcKYKm2JYaWILV7kkRBbD5-2BSpSXd4VViTfc8aY107m66HimRSfX-2F=
+DMgqmAJLWFoL-2FrCwANwvKxx-2B8ArjBHriVXPpVbNN2ilfHNr0VRnbgr2QG8sT99mMgG_W9Fa=
+NzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4r=
+nY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9N=
+AjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51=
+Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5V=
+IsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrY=
+DXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5=
+GCzem5K404TkqUQ69W6PnpdTYqmHX236hB1vFnJsQCwgaWm7OrnTx6LmX8Sz-2FIFbuYEN44R65=
+gu2L7-2BwbFQJGYBxReuQaC3-2Bo7iKOjbIeVqknHZFIzz-2FMyY79-2BM2vxWOp2dX2MH577fQ=
+z5Pw5PtnYYyrvCSxMehp7KlcpGH7puyLMah3eqaF3FLqs-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#3E7697;font-size:13px;display:block;text-align:center;line-height:20=
+px;letter-spacing:.2px;">
+                            Customer Service Center
+                        </a>
+                    </td>
+                    <td style=3D"text-align:center;padding:0px 4px;">
+                        <span class=3D"center-line" style=3D"display:block;=
+color:#B9B6B0;text-align:center;"> | </span>
+                    </td>
+                    <td valign=3D"center" style=3D"text-align:center;text-a=
+lign:center;">
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHHK-2BWOktZE7S3Iq=
+cXjTfQ5lNdIuNWISc16sYDeHmYfjv5Gac2phrjBCmBpbBoUNMJ2ynUqkfK5XqvUGwYBtzY7-2BO=
+WwSDKQUoEuyLUrpjjxUQn-2FdqZoD23L-2FclwEfr4y-2BWo14AkdVDSm7gRDyGtol8aFDhTTDH=
+7ZBeRgg1bjboqVxb2EdQ7aFD-2Bphcq6YhjWL-2ByIf-2F9D7b7V-2FYH6F-2FEl4yCqkxOY_W9=
+FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B=
+4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn=
+9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n=
+51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r=
+5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7h=
+rYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfI=
+g5GCzem5K404TkqUDmHg-2FfxAMVOuDZ5W098tIMcoUwYpwY2S2H8RQBHa-2FRDsVkqkRlXiwvc=
+l5NWNmRVycCwEpddeuHNQ8q4IRwv-2FPQx41A72hDdg-2BxPdwc474JgIZudZgE1rNOLe4rMna4=
+sHhVgnEBvtvOOvR9due0IGje7MS87yv7yX6pv865USFgw-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#3E7697;font-size:13px;display:block;text-align:center;line-height:20=
+px;letter-spacing:.2px;">
+                            Savings Center
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <!--[if !mso]><!-->
+            <table class=3D"external-links visible_mobile_view" style=3D"di=
+splay:none;max-height:0px;overflow:hidden;" border=3D"0" width=3D"100%" cel=
+lpadding=3D"0" cellspacing=3D"0">
+                <tbody>
+                <tr>
+                    <td style=3D"text-align:center" width=3D"10%" >
+
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHFNAW-2FTcTrcl-2B=
+mVGINcWlqF0-2FCGzZXO0MXmrg0vmfGOau5mkPy4TN820e-2BB-2FmLzaOXEI9kq8gYeRq5pbCA=
+z1G9D-2FUjQWWj0kXNBkU92Co6GY2j4y9vgQ7VK06vTWbrw1ps7XP74t36ZaLCZivME64DM7DJl=
+-2BGCucDLCY23NBudB1ZRJgyVr7UkAXAqju0pVz-2Bs-3Dnd9r_W9FaNzDNe6tRLbc0stba1A1O=
+RkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87=
+D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREG=
+eowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNn=
+Z73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuP=
+dpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2Mh=
+L20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUgww9WZ=
+SK-2BttQjeQaRF-2BBZdLL9zJNxqQqF2X-2FzKyrgV77KR5yDuea0tt2fzTdjXmEQ-2B3ddvxvh=
+WdtG-2B7128J23c5pvTiSS3oH7pdjrsCDcXDMWwy7PhqMlpyPtxJLqgMEJxfxozyeS03EPWEKEq=
+AUZRMZNFyTszegq1ieTwnbBzs-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#3E7697;font-size:13px;display:inline-block;line-height:20px;letter-s=
+pacing:.2px;">
+                            Privacy & Security Statement
+                        </a>
+
+
+
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHHb53ZXH1yj9AWlur=
+QpNyVkI8nJ5oS5tqUB-2BImc510hRTvX91RXN4-2FpZXxPlpwvEcXua3-2BxMKetHM61d68OMTJ=
+bHLnqm-2Bqkv25IlkRy69uTbzL-2BI-2BhU8-2B93Hkt8tOdou9AxMWaCSBu6VhddktQJVELtLM=
+u8cAn0b08Rl9YLjedqy0M9cntQtc0b7i8qG1Zx1x4iEjy5b4yPkwKM9g7HBZxeJRra_W9FaNzDN=
+e6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m=
+1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmf=
+zJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz=
+-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqS=
+wI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRS=
+IRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCze=
+m5K404TkqUYSWa6oHvQd9raBe7tifgIV9-2F3SgDOMFKM9pmLiuN6qjKHobmVfQlaSu2PsQl4Ea=
+PFZlCHndL0MBj3dsFEthlA0HBWPudHw57VIQHhmciHERlf1WcfOJhlaUaZLwAbqXmkISzVTT5uG=
+j1KsKH5hBmWHSRid0oyDslnZWCbk75n0k-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#3E7697;font-size:13px;display:inline-block;line-height:20px;letter-s=
+pacing:.2px;">
+                            Return Policy
+                        </a>
+
+
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHGcW1T8yh2wVHLRPw=
+t6O8jV10hJKIeJiRzY05Du2rBZKTDDe8re9sMzCW-2BK-2Fq-2FZrprldxkdMns-2BcYznPBKGo=
+ekwFRuFtFYYHY-2B2KYXcKYKm2JYaWILV7kkRBbD5-2BSpSXd4VViTfc8aY107m66HimRSfX-2F=
+DMgqmAJLWFoL-2FrCwANwvKxx-2B8ArjBHriVXPpVbNN2ilfHNr0VRnbgr2QG8sT99HtHY_W9Fa=
+NzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4r=
+nY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9N=
+AjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51=
+Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5V=
+IsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrY=
+DXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5=
+GCzem5K404TkqUdkzvO3crPUjJA-2FeGtwVFkwX-2FM5-2BVFnGjE1pHp9BPHwJU-2FVsA7Zy8n=
+8XFYVQrMPDjglJx6KTpMoGv-2FZ0Fkezi8a0uNol1U4I3jTf2fI9n5ELXXI57aCCoOuhkFpIUn7=
+yCLk6H8i-2BVuEVX7mw-2FOWsNLc91tto-2BvU75jKs4OoJ06oE-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#3E7697;font-size:13px;display:inline-block;line-height:20px;letter-s=
+pacing:.2px;">
+                            Customer Service Center
+                        </a>
+
+
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHHK-2BWOktZE7S3Iq=
+cXjTfQ5lNdIuNWISc16sYDeHmYfjv5Gac2phrjBCmBpbBoUNMJ2ynUqkfK5XqvUGwYBtzY7-2BO=
+WwSDKQUoEuyLUrpjjxUQn-2FdqZoD23L-2FclwEfr4y-2BWo14AkdVDSm7gRDyGtol8aFDhTTDH=
+7ZBeRgg1bjboqVxb2EdQ7aFD-2Bphcq6YhjWL-2ByIf-2F9D7b7V-2FYH6F-2FEl4yCqqqhq_W9=
+FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B=
+4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn=
+9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n=
+51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r=
+5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7h=
+rYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfI=
+g5GCzem5K404TkqUVVC65j351IquWs4Fuhcz0wPDmtExfR9hKKguNzJoWrDkx-2F2gyiKaMfnzP=
+sndFjP19eQGE7XMj28XwJbIRJVFxpxZhhZrctt7VbsJSt8hiC-2Fx-2FjS6Vi9aW38b05cacMLO=
+GJCZhpM61cPQ33GK9NvqumfFe9Arjjx2zmaixE990N8-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#3E7697;font-size:13px;display:inline-block;line-height:20px;letter-s=
+pacing:.2px;">
+                            Savings Center
+                        </a>
+
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.Z-2F6cZwEAxLh2UrQd8xVE5pmAUbec7y5IvKFNbz5R2J4IoHgPmgLuwuOH96uf=
+vXNaWLArRD-2FvOvhhb67V9JI-2BNxkDtKbiVWJyAR8VSp2mEOXA10C1BcAA2EE3AJUve9-2BK7=
+ypD6IAUpV3NGsRwVFVzSCVCj9C-2Fs9rYMi2ccMwky5CrdFuoHlcCDK7KW-2F-2BRKJjdQ11WSv=
+B4TxKhqzcxVT2a93Fp2BELNccLJdujGuJX3x3oMU-2BtbeU8C3kkPYEK4z5g65g1_W9FaNzDNe6=
+tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1N=
+OYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJ=
+cIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2=
+Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI=
+0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIR=
+bauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5=
+K404TkqU9Olu6790jn2WffOhon0YeXnJTbETg8ZhYWJSIzqwYaQQIbDpX-2FZzgaf-2BcVxawup=
+HuBbXLoihORU-2FDGURogJd-2Fmg9oOxD1rJxeLD4-2BfglkeZs5xzsknYPdVLwPIHogxrgAB6E=
+fULXCiVKaQvImWNr1RKJ9-2BhYts9TJcj8ylw7ScQ-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#3E7697;font-size:13px;display:inline-block;line-height:20px;letter-s=
+pacing:.2px;">
+                            Local Ad
+                        </a>
+
+
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHE1O7vVqWYDRjassN=
+5IuaNoNjfeKQLHaT-2FgfKrZ5WUB-2ByPRsJkTtb-2FunA4rTb7D7PbdC7J2md5XvBJcmbC31JV=
+OTeUYvQoQLRcJNwa5X237BmK-2FqhU2tJU5F-2BRAfnwZgtWedOybjXoxyqtBYobugTvwMewOsY=
+yN-2FeKhr4Y1ki2H6dTpUAGQGtG8IbnW69zlGZk-3D2nAM_W9FaNzDNe6tRLbc0stba1A1ORkjO=
+DXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5Kv=
+OhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQ=
+BHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73d=
+u4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1=
+rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20B=
+VekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUFOA558-2BI=
+qlm5JLbW1gkxUwSAmXWzR9g7O9PoES5QGM0NsJ2AHRnOp0IgK4v7AwJjBtp3RI-2BMxjbwi9u7i=
+wS7DXZKmivrlYjWCrULJL4GzoM3HLH-2Bk4qWZuTQsKgq3aCZA4XWv4UBte9V3DShVdPylI1-2F=
+yKD2m-2FfUWORD8ala3lk-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#3E7697;font-size:13px;display:inline-block;line-height:20px;letter-s=
+pacing:.2px;">
+                            Store Finder
+                        </a>
+
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHGWtVlfFas14Hvwgu=
+-2F8E5mc43GB5bKWAlVDtM9FhzgjnrCcp6cwdulaE3JI9vIHopVD-2BVD0J8042wXNfPWxlde1c=
+-2FKpPvecz4wKcg5PVlSkxzu540Xfc1HomWbonXYaJov-2FFy49Qh58Sg2zvZ2X8fpwyZkoOwsn=
+SpTsNZfI6OSEpBYUgrUECvXve2JhRwITiQ8-3DudC-_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw=
+7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPo=
+lE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhP=
+tSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4To=
+Rc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8=
+uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekW=
+TN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUnby-2FXeCBeXhR=
+C4M7odEEP68y9KbyISzhdgnwiacRojjmumQdjKvdVg9vS6m-2Bh6z5U2sb08LiBx9Qm4R7FXX7i=
+48UlFfy0XLDAUFeBSxtIoHFKYO0K1CBS44nzznKtTfdR9yKfpdGD683bYcywyyawljgkhAQPmO2=
+YWeUr-2FLVvhM-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#3E7697;font-size:13px;display:inline-block;line-height:20px;letter-s=
+pacing:.2px;">
+                            The Home Depot Credit Card
+                        </a>
+
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHF9AB39f-2B-2BwOl=
+-2BD-2F9PBytJIzR0-2BEXHkKODjkbf9TUrE4d-2BKpcWMoNXvutBpEed0tvmTZrG-2Bq0sVu4g=
+QnsIfkwIEYbzHiHqHTMaHIoFZTANNPdpVVnuG7M4lWvvc0LbWN-2FWZocDzCNG80RfyhxcxPfT1=
+XUpesj-2BLpsFK3P-2F10VnOgi8bvlUCEOLkHCkKJEUjg2-2FsBkn7GjpppejgK-2FHRczS5nUs=
+94wDl-2Fm-2BdQV1dlqNyAA-3D-3DlnTq_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Oge=
+snk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M=
+1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39=
+zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlc=
+Xx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk=
+7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fu=
+x8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUaBfv8KDmZTZQRz-2Fg0tn2s=
+1EeXTmKEimpCIUOZMQ5BSbJxhrW2Py41qloZE-2FSD6yZ-2Fw69oageEmj9CAt6Y-2Fdm14872E=
+d06t7G3HluLibNPrqez8hbNXg6GpLjb-2FczEFtAWk5doQMI-2BnS2cSLsC4-2BDESyK-2BZjjD=
+y2IYz2tS4CeWkI-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#3E7697;font-size:13px;display:inline-block;line-height:20px;letter-s=
+pacing:.2px;">
+                            Manage My Settings
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <!--<![endif]-->
+        </td>
+    </tr>
+    <tr>
+        <td style=3D"padding-bottom:10px; padding-left:10px;">
+            <table class=3D"external-links reduce-width hide_mobile_view" b=
+order=3D"0" width=3D"100%" cellpadding=3D"0" cellspacing=3D"0">
+                <tbody>
+                <tr>
+                    <td valign=3D"center" style=3D"text-align:center;text-a=
+lign:center;">
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.Z-2F6cZwEAxLh2UrQd8xVE5pmAUbec7y5IvKFNbz5R2J4IoHgPmgLuwuOH96uf=
+vXNaWLArRD-2FvOvhhb67V9JI-2BNxkDtKbiVWJyAR8VSp2mEOXA10C1BcAA2EE3AJUve9-2BK7=
+ypD6IAUpV3NGsRwVFVzSCVCj9C-2Fs9rYMi2ccMwky5CrdFuoHlcCDK7KW-2F-2BRKJjdQ11WSv=
+B4TxKhqzcxVT2a93Fp2BELNccLJdujGuJX3x3oMU-2BtbeU8C3kkPYEK4z5giZ_4_W9FaNzDNe6=
+tRLbc0stba1A1ORkjODXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1N=
+OYpgOIXxHexF87D5KvOhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJ=
+cIp1LuOPUNzREGeowQBHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2=
+Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI=
+0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIR=
+bauYaZWxRuF2MhL20BVekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5=
+K404TkqUnJtoYgC9yR-2FU4Rr4I-2F4QumTcSkS85-2BAQ5kdObUUNCJDsEM9lsjUt9MMTLBJ4i=
+4ph8HoVrewzHMDTXzaE0aWZs3rC1LtGaqBDC5xj3iEUpaENv9lSVfYhCtli-2FBNi0F5R4vUN9R=
+7CGxiQx4VN6p7kWcjVqApYABybMXJcgKQmAbg-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#3E7697;font-size:13px;display:block;text-align:center;line-height:20=
+px;letter-spacing:.2px;">
+                            Local Ad
+                        </a>
+                    </td>
+                    <td style=3D"text-align:center;padding:0px 4px;">
+                        <span class=3D"center-line" style=3D"display:block;=
+color:#B9B6B0;text-align:center;"> | </span>
+                    </td>
+                    <td valign=3D"center" style=3D"text-align:center;text-a=
+lign:center;">
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHE1O7vVqWYDRjassN=
+5IuaNoNjfeKQLHaT-2FgfKrZ5WUB-2ByPRsJkTtb-2FunA4rTb7D7PbdC7J2md5XvBJcmbC31JV=
+OTeUYvQoQLRcJNwa5X237BmK-2FqhU2tJU5F-2BRAfnwZgtWedOybjXoxyqtBYobugTvwMewOsY=
+yN-2FeKhr4Y1ki2H6dTpUAGQGtG8IbnW69zlGZk-3D30Ws_W9FaNzDNe6tRLbc0stba1A1ORkjO=
+DXUw7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5Kv=
+OhPolE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQ=
+BHhPtSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73d=
+u4ToRc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1=
+rFX8uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20B=
+VekWTN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqU3UIjeuvfY9=
+MkuQ5hi9HxfcX2OKfBkX-2FOzwNmr2N8bzetUiNIoQd-2B3PR-2F3PxeXXJTyg5caJ74WC38Qz4=
+0S72gxjc6vAuq4vXC2FWZkbcvvsb6k0dC5SuFaiVxtUCkaTujkB3Tnezu2jpBbduRvqaJGiZJHV=
+k1DAkWlCxU-2BRgW9o8-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#3E7697;font-size:13px;display:block;text-align:center !important;lin=
+e-height:20px;letter-spacing:.2px;">
+                            Store Finder
+                        </a>
+                    </td>
+                    <td style=3D"text-align:center;padding:0px 4px;">
+                        <span class=3D"center-line" style=3D"display:block;=
+color:#B9B6B0;text-align:center;"> | </span>
+                    </td>
+                    <td valign=3D"center" style=3D"text-align:center;text-a=
+lign:center;">
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHGWtVlfFas14Hvwgu=
+-2F8E5mc43GB5bKWAlVDtM9FhzgjnrCcp6cwdulaE3JI9vIHopVD-2BVD0J8042wXNfPWxlde1c=
+-2FKpPvecz4wKcg5PVlSkxzu540Xfc1HomWbonXYaJov-2FFy49Qh58Sg2zvZ2X8fpwyZkoOwsn=
+SpTsNZfI6OSEpBYUgrUECvXve2JhRwITiQ8-3Dxhgg_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw=
+7KU2i1Ogesnk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPo=
+lE5CDHK4M1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhP=
+tSC5cbP39zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4To=
+Rc6IXvYlcXx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8=
+uUBowQwZk7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekW=
+TN9ZY-2Fux8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUw7BpMVloXmJDQD=
+padFydT2g2zV32re16pJ9IFt0ztr-2BNZ-2F8pCRXrb0-2B1lBSckY7fc0Nm6bn0YhKH33GzWgF=
+iAVJrik4CPsaQ0aQvl3wPQ925XA5d1IAzoxnBRefx3RB6Q4xrA5zeW136rqMKcmP7Aoy0K2ubhD=
+oyoO39VgQCwns-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#3E7697;font-size:13px;display:block;text-align:center !important;lin=
+e-height:20px;letter-spacing:.2px;">
+                            The Home Depot Credit Card
+                        </a>
+                    </td>
+                    <td style=3D"text-align:center;padding:0px 4px;">
+                        <span class=3D"center-line" style=3D"display:block;=
+color:#B9B6B0;text-align:center;"> | </span>
+                    </td>
+                    <td valign=3D"center" style=3D"text-align:center;text-a=
+lign:center;">
+                        <a href=3D"https://link.order.homedepot.com/ls/clic=
+k?upn=3Du001.zYMiv-2BQD4Sp5WnWzM44zM-2F5L8hOkBzkxZKonknrGUHF9AB39f-2B-2BwOl=
+-2BD-2F9PBytJIzR0-2BEXHkKODjkbf9TUrE4d-2BKpcWMoNXvutBpEed0tvmTZrG-2Bq0sVu4g=
+QnsIfkwIEYbzHiHqHTMaHIoFZTANNPdpVVnuG7M4lWvvc0LbWN-2FWZocDzCNG80RfyhxcxPfT1=
+XUpesj-2BLpsFK3P-2F10VnOgi8bvlUCEOLkHCkKJEUjg2-2FsBkn7GjpppejgK-2FHRczS5nUs=
+94wDl-2Fm-2BdQV1dlqNyAA-3D-3Diuid_W9FaNzDNe6tRLbc0stba1A1ORkjODXUw7KU2i1Oge=
+snk8YxDzJYPPLcb41aQta9UM-2BYq7qvX-2B4rnY1m1NOYpgOIXxHexF87D5KvOhPolE5CDHK4M=
+1IGEgWUySbnZzY6dSP9dJHKq5uvIzMHoYRCn9NAjmfzJcIp1LuOPUNzREGeowQBHhPtSC5cbP39=
+zfaXmmJU0Q6-2BH23eG3Ya17RWiV-2BqDA6n51Onqz-2Bb-2B2SI5dIyNnZ73du4ToRc6IXvYlc=
+Xx6KFTEgfhltZiaU58qG9gDSlZwzEnOYS08r5VIsqSwI0xL6GHLWtpEGuPdpD1rFX8uUBowQwZk=
+7ElqhcO-2FmkqCUnf1H0uGVDAO7HX6qIzG7hrYDXRSIRbauYaZWxRuF2MhL20BVekWTN9ZY-2Fu=
+x8GZ8tsjFUwLKOL5AWVVPQyz-2FLRIW-2BfIg5GCzem5K404TkqUlmoqxDeGYS9CtW7ycly6oTf=
+EyembgWIEk1a-2B7JApVn2AdIQrdJ6c3fZdKqCeCjnXljHlRxIAq55wbJ4gZaWRd4OicdbHsytf=
+dZDX1FQPUX6v2KOHNxz7XP1J0ugy6hoyWHPbrdcC9x9IwHX6RphT7TfyDnryOT3nvwxjxpkRPts=
+-3D"
+                           target=3D"_blank" style=3D"text-decoration:none;=
+color:#3E7697;font-size:13px;display:block;text-align:center !important;lin=
+e-height:20px;letter-spacing:.2px;">
+                            Manage My Settings
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+   =20
+   =20
+   =20
+   =20
+
+
+                        <!-- End Footer -->
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <!-- End Center Postion -->
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!-- Start Remove -->
+<span style=3D"display: none">x-originalMessageId=3D6293ba12-e62e-49ef-b0da=
+-b4c53318a5d4</span>
+<img src=3D"https://link.order.homedepot.com/wf/open?upn=3Du001.y1DxcjAKzqv=
+yeX9SL4fVXJ3YT7B-2BmyFIVE-2BOO91yvUb83L3szV4PIu7S-2FnRr1lSXA2mCR7qW68fJWSKr=
+W8E59vFm3yHzGbPgnoYmDNXNMNM8-2B8V3F6BRxFzbRUw-2FtuQXgH9y9dHoyFMTuPW4KAc9MEC=
+I5cxFV0oAPFMvqzskk87oevkLmWA-2BlSDW-2FH6HTa4Ra-2BkaFEjtdXhmo-2FrwGCOYUIJxPw=
+oZb2C-2F4eMhE4IWS8q-2Bi2QhDg8loTTq9jE-2FOfwQ0GtI5C5Qh8q8owuFjIlvlj-2B7zQSsj=
+wkHOkiulza8KLQ6dqUTn3I-2FEJ-2FdiCbbTinkqIRsZ8ePFS8U85KSdU61PTwVfjmX0HOY2-2B=
+eboePdn6nI-2Bdo5s-2Bf29hTEJ1gEwyxCrlJbLwy8d2WDxI5hAJdHEgwecyrhtnMCg79wpVOg6=
+Bm5S7H1blTo6R3aWb5iBHictbPwNsVfZ7uTDI1YK9sF5hr2Q6l2ij-2Faumx7RpiBLNEsocX4I-=
+2FUopdq1UQHIBpakUdOGyNoS2N4YvNX3p1iEaJhzbfj6I7Cv04fNB-2F8Dwg7DgBfaS6Mg3KhYh=
+PpEj-2FKugNAQ3Df-2F-2F1aHMVjIXHwpxYVdtFk7yg9FL2q0iMeKvZE-3D" alt=3D"" width=
+=3D"1" height=3D"1" border=3D"0" style=3D"height:1px !important;width:1px !=
+important;border-width:0 !important;margin-top:0 !important;margin-bottom:0=
+ !important;margin-right:0 !important;margin-left:0 !important;padding-top:=
+0 !important;padding-bottom:0 !important;padding-right:0 !important;padding=
+-left:0 !important;"/></body>
+
+</html>

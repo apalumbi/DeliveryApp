@@ -1,65 +1,51 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { VARIATIONS } from "./variations";
-import { ROUND3_VARIATIONS } from "./round3";
-import { BOLD_VARIATIONS } from "./bold";
-import { CONSTRUCTION_VARIATIONS } from "./construction";
-import { ARCHITECTURE_VARIATIONS } from "./architecture";
+
 import { ThemeToggle } from "@/components/theme-toggle";
 
+import { DETAIL_VARIATIONS, ROUND2_VARIATIONS } from "./variations";
+
 export const metadata: Metadata = {
-  title: "Orders list — design directions",
+  title: "Order detail — design directions",
 };
 
 const ROUNDS = [
   {
-    id: "round3",
-    title: "Round 3 — palettes",
-    note: "Same skeleton (distinct Start block + colored status words), eight palettes. Type held constant so you're only judging color.",
-    items: ROUND3_VARIATIONS,
+    id: "round2",
+    title: "Round 2 — your picks",
+    note: "Six merges the picks; Seven is the same flow one thing at a time — click through it.",
+    startAt: 6,
+    items: ROUND2_VARIATIONS,
   },
   {
     id: "round1",
-    title: "Round 1",
-    note: "The first five, kept for comparison. 2 · Clean SaaS runs on design tokens — try the theme switcher.",
-    items: VARIATIONS,
-  },
-  {
-    id: "bold",
-    title: "Bold, refined",
-    note: "Five takes on 5's hierarchy — address as hero, big findable numbers — without the cartoon.",
-    items: BOLD_VARIATIONS,
-  },
-  {
-    id: "construction",
-    title: "Construction brands",
-    note: "What the trade actually looks like: deep navy, charcoal, safety orange, sturdy type.",
-    items: CONSTRUCTION_VARIATIONS,
-  },
-  {
-    id: "architecture",
-    title: "Architecture firms",
-    note: "Swiss minimalism: whitespace, hairlines, restrained type, almost no color.",
-    items: ARCHITECTURE_VARIATIONS,
+    title: "Round 1 — five skeletons",
+    note: "Same content, same tokens — only the structure changes.",
+    startAt: 1,
+    items: DETAIL_VARIATIONS,
   },
 ];
 
-export default function OrdersMockupsPage() {
+export default function OrderDetailMockupsPage() {
   return (
     <main className="min-h-screen bg-[#111113] px-8 py-10">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <Link
-            href="/mockups"
+            href="/mockups/orders"
             className="text-[11px] tracking-[0.12em] text-zinc-500 uppercase transition-colors hover:text-zinc-300"
           >
-            ← All screens
+            ← Orders list
           </Link>
           <h1 className="mt-2 text-[15px] font-medium text-zinc-200">
-            Orders list — design directions
+            Order detail — design directions
           </h1>
-          <p className="mt-1 text-[13px] text-zinc-500">
-            Same content in every frame, mobile 390 wide. Scroll sideways.
+          <p className="mt-1 max-w-2xl text-[13px] text-zinc-500">
+            The awaiting-approval state: the page the customer lands on to
+            review a forwarded cart, and the tracking record it becomes after
+            approval. Every frame is #1039 · Lowe&apos;s · North Frisco · 4
+            items · $120.10 — the awaiting-approval row from the approved list.
+            Mobile 390 wide, cropped to 633 tall. Scroll sideways.
           </p>
         </div>
         <ThemeToggle />
@@ -79,14 +65,14 @@ export default function OrdersMockupsPage() {
               <div key={v.name} className="w-97.5 shrink-0 snap-start">
                 <div className="mb-3 flex items-baseline justify-between">
                   <span className="text-[13px] font-medium text-zinc-200">
-                    {i + 1} · {v.name}
+                    {round.startAt + i} · {v.name}
                   </span>
                   <span className="text-[11px] tracking-[0.12em] text-zinc-500 uppercase">
                     {v.tag}
                   </span>
                 </div>
                 <div className="h-158.25 overflow-hidden rounded-4xl border border-zinc-800 bg-white shadow-2xl">
-                  <div className="h-full overflow-y-auto">
+                  <div data-frame-scroll className="h-full overflow-y-auto">
                     <v.Component />
                   </div>
                 </div>

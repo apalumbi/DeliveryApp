@@ -28,7 +28,7 @@ const GROUPS: Group[] = [
   {
     id: "portal",
     title: "Customer portal",
-    note: "Mobile 390×844 · the surface the client has reviewed",
+    note: "Mobile 390 wide · the surface the client has reviewed",
     shape: "phone",
     screens: [
       {
@@ -47,11 +47,8 @@ const GROUPS: Group[] = [
       },
       {
         name: "Order detail",
-        note: "Status timeline, delivery info, items, price, status-driven CTA.",
-      },
-      {
-        name: "Checkout",
-        note: "Verify items → site + instructions → price → approve.",
+        note: "Status timeline, delivery info, items, price, status-driven CTA — and the review & approve state for a forwarded cart.",
+        href: "/mockups/orders/detail",
       },
     ],
   },
@@ -100,7 +97,7 @@ const GROUPS: Group[] = [
 function Frame({ screen, shape }: { screen: Screen; shape: Group["shape"] }) {
   if (screen.designed) {
     return (
-      <div className="h-211 overflow-hidden rounded-4xl border border-zinc-800 bg-white shadow-2xl">
+      <div className="h-158.25 overflow-hidden rounded-4xl border border-zinc-800 bg-white shadow-2xl">
         <div className="h-full overflow-y-auto">
           <CleanSaas />
         </div>
@@ -112,7 +109,7 @@ function Frame({ screen, shape }: { screen: Screen; shape: Group["shape"] }) {
     <div
       className={
         shape === "phone"
-          ? "flex h-211 items-center justify-center rounded-4xl border border-zinc-800 bg-zinc-900/60"
+          ? "flex h-158.25 items-center justify-center rounded-4xl border border-zinc-800 bg-zinc-900/60"
           : "flex h-100 items-center justify-center rounded-2xl border border-zinc-800 bg-zinc-900/60"
       }
     >
@@ -128,9 +125,7 @@ export default function MockupsPage() {
     <main className="min-h-screen bg-[#111113] px-8 py-10">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-[15px] font-medium text-zinc-200">
-            All screens
-          </h1>
+          <h1 className="text-[15px] font-medium text-zinc-200">All screens</h1>
           <p className="mt-1 max-w-xl text-[13px] text-zinc-500">
             Every screen in the MVP. Designed screens are live; the rest are
             placeholders until we get to them.
