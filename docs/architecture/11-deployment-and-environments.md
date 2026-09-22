@@ -59,9 +59,12 @@ All configuration is environment variables. No secrets in the repo, no `.env` fi
 
 ```bash
 # Supabase
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=          # server-only, never NEXT_PUBLIC_
+# Project Settings → API Keys → "Publishable and secret API keys". The publishable
+# and secret keys replace the legacy anon / service_role JWTs, which Supabase
+# deprecates at the end of 2026. Both are opaque strings, not JWTs.
+NEXT_PUBLIC_SUPABASE_URL=               # https://<project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=   # sb_publishable_...  browser-safe; RLS applies
+SUPABASE_SECRET_KEY=                    # sb_secret_...  server-only, never NEXT_PUBLIC_; bypasses RLS
 
 # Mailgun
 MAILGUN_API_KEY=
@@ -93,7 +96,7 @@ APP_ENV=local|preview|production
 
 Two guardrails:
 
-- **`SUPABASE_SERVICE_ROLE_KEY` is never prefixed `NEXT_PUBLIC_`.** A `NEXT_PUBLIC_` prefix ships a value to the browser; this key bypasses all RLS.
+- **`SUPABASE_SECRET_KEY` is never prefixed `NEXT_PUBLIC_`.** A `NEXT_PUBLIC_` prefix ships a value to the browser; this key bypasses all RLS. The legacy `service_role` key had the same property — the rename does not change the rule.
 - **The app asserts `APP_ENV` against key modes at startup.** A `sk_live_` Stripe key with `APP_ENV=preview` is a misconfiguration that would charge real customers from a test environment. Fail fast instead.
 
 ---

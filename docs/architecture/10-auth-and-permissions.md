@@ -56,7 +56,7 @@ Middleware reads the role from the JWT claim and redirects cross-role access to 
 
 ## User provisioning
 
-Because self-signup is off, account creation uses the Supabase **admin API**, which requires the service role key. That key must never reach the browser.
+Because self-signup is off, account creation uses the Supabase **admin API**, which requires the secret key (`sb_secret_...`). That key must never reach the browser.
 
 ```mermaid
 sequenceDiagram
@@ -230,7 +230,7 @@ create policy inbound_emails_dispatcher on inbound_emails for all
 
 ## Service role usage
 
-The service role key bypasses RLS entirely. It appears in exactly three places:
+The secret key (`sb_secret_...`, formerly the `service_role` key) bypasses RLS entirely. It appears in exactly three places:
 
 | Location                                                 | Why                                                                      |
 | -------------------------------------------------------- | ------------------------------------------------------------------------ |
