@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
+import type { ComponentType } from "react";
 import Link from "next/link";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 
 import { CleanSaas } from "./orders/clean-saas";
+import { ApprovalEmail } from "./start/email";
+import { StartOrderFlow } from "./start/flow";
+import { HomeScreen } from "./start/home";
 
 export const metadata: Metadata = {
   title: "Mockups — all screens",
@@ -13,7 +17,7 @@ type Screen = {
   name: string;
   note: string;
   href?: string;
-  designed?: boolean;
+  Component?: ComponentType;
 };
 
 type Group = {
@@ -36,14 +40,28 @@ const GROUPS: Group[] = [
         note: "One login per company — email + password.",
       },
       {
+        name: "Home",
+        note: "Start an order + see past orders. One line appears only when an approval is waiting.",
+        href: "/mockups/start",
+        Component: HomeScreen,
+      },
+      {
         name: "Orders list",
         note: "The approved Clean SaaS direction, on design tokens. Repaints with the theme switcher.",
         href: "/mockups/orders",
-        designed: true,
+        Component: CleanSaas,
       },
       {
         name: "Start an order",
-        note: "Build a cart at Home Depot or Lowe's, share it to the alias — don't check out.",
+        note: "Where's it going → retailer → store → check your store → build & share. Both retailers open their store page, from the seeded store record.",
+        href: "/mockups/start",
+        Component: StartOrderFlow,
+      },
+      {
+        name: "Email · cart ready",
+        note: "The checkout invite — order summary, one CTA to the order page, and a call-us line.",
+        href: "/mockups/start",
+        Component: ApprovalEmail,
       },
       {
         name: "Order detail",
@@ -95,11 +113,12 @@ const GROUPS: Group[] = [
 ];
 
 function Frame({ screen, shape }: { screen: Screen; shape: Group["shape"] }) {
-  if (screen.designed) {
+  if (screen.Component) {
+    const ScreenComponent = screen.Component;
     return (
       <div className="h-158.25 overflow-hidden rounded-4xl border border-zinc-800 bg-white shadow-2xl">
-        <div className="h-full overflow-y-auto">
-          <CleanSaas />
+        <div data-frame-scroll className="h-full overflow-y-auto">
+          <ScreenComponent />
         </div>
       </div>
     );

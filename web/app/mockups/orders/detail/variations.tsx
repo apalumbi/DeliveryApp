@@ -36,7 +36,9 @@ function ChecklistDetail() {
       <section className="mt-5 px-5">
         <div className="mb-2 flex items-baseline justify-between">
           <h2 className="text-[13px] font-semibold text-ink">Your cart</h2>
-          <span className="text-[12px] text-ink-faint">4 items</span>
+          <span className="text-[12px] text-ink-faint">
+            {ITEMS.length} items
+          </span>
         </div>
         <List>
           {ITEMS.map((item) => (
@@ -51,7 +53,7 @@ function ChecklistDetail() {
         <DeliveryFields />
       </section>
 
-      <section className="mt-6 px-5">
+      <section className="mt-6 px-5 pb-6">
         <h2 className="mb-2 text-[13px] font-semibold text-ink">Price</h2>
         <Card tone="muted" className="px-4 py-3">
           <PriceRows />
@@ -128,7 +130,7 @@ function QuoteDetail() {
         <DeliveryFields />
       </section>
 
-      <section className="mt-6 px-5">
+      <section className="mt-6 px-5 pb-6">
         <div className="text-[10.5px] font-semibold tracking-[0.16em] text-ink-faint uppercase">
           History
         </div>
@@ -160,7 +162,9 @@ function StickySummaryDetail() {
       <section className="mt-5 px-5">
         <Card>
           <div className="flex items-baseline justify-between border-b border-hairline-soft px-4 py-3">
-            <h2 className="text-[13px] font-semibold text-ink">4 items</h2>
+            <h2 className="text-[13px] font-semibold text-ink">
+              {ITEMS.length} items
+            </h2>
             <span className="text-[12px] text-ink-muted tabular-nums">
               Materials {PRICE.materials}
             </span>
@@ -191,7 +195,7 @@ function StickySummaryDetail() {
               type="button"
               className="cursor-pointer text-[12.5px] font-medium text-accent"
             >
-              Show all 4 →
+              Show all {ITEMS.length} →
             </button>
           </div>
         </Card>
@@ -202,7 +206,7 @@ function StickySummaryDetail() {
         <DeliveryFields />
       </section>
 
-      <section className="mt-5 px-5">
+      <section className="mt-5 px-5 pb-6">
         <h2 className="mb-2 text-[13px] font-semibold text-ink">Price</h2>
         <Card tone="muted" className="px-4 py-3">
           <PriceRows />
@@ -269,7 +273,7 @@ function NumberedDetail() {
         </div>
       </section>
 
-      <section className="mt-6 px-5">
+      <section className="mt-6 px-5 pb-6">
         <div className="flex items-center gap-2.5">
           <SectionNumber n={3} />
           <h2 className="text-[13.5px] font-semibold text-ink">Price</h2>
@@ -340,7 +344,7 @@ function GuidedDetail() {
         </Card>
       </section>
 
-      <section className="mt-6 px-5">
+      <section className="mt-6 px-5 pb-6">
         <AfterApproveCard />
       </section>
 
@@ -387,7 +391,7 @@ function NumberedReceiptDetail() {
         </div>
       </section>
 
-      <section className="mt-6 px-5">
+      <section className="mt-6 px-5 pb-6">
         <AfterApproveCard />
       </section>
 

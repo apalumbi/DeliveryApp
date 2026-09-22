@@ -43,7 +43,7 @@ export default function OrderDetailMockupsPage() {
           <p className="mt-1 max-w-2xl text-[13px] text-zinc-500">
             The awaiting-approval state: the page the customer lands on to
             review a forwarded cart, and the tracking record it becomes after
-            approval. Every frame is #1039 · Lowe&apos;s · North Frisco · 4
+            approval. Every frame is #1039 · Lowe&apos;s · North Frisco · 3
             items · $120.10 — the awaiting-approval row from the approved list.
             Mobile 390 wide, cropped to 633 tall. Scroll sideways.
           </p>

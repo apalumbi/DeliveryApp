@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Chevron } from "@/components/ui/icons";
 import { orderStatusLabel, orderStatusTone } from "@/lib/tokens";
 
-import { ITEMS, ORDER, PRICE, RECEIPT_META, STATUS } from "./data";
+import { ITEMS, ORDER, PRICE, RECEIPT_META, SITE, STATUS } from "./data";
 import {
   AfterApproveCard,
   DeliveryFields,
@@ -17,6 +17,13 @@ import {
 } from "./parts";
 
 const STEP_COUNT = 4;
+
+/** The customer already chose these things at the start of the flow. */
+const CONFIRM_LABELS = [
+  "Confirm store",
+  "Confirm items",
+  "Confirm delivery address",
+];
 
 /** V7 — one thing at a time: store → cart → drop-off → final review. */
 export function StepWizardDetail() {
@@ -71,7 +78,7 @@ export function StepWizardDetail() {
         </div>
       </header>
 
-      <section className="px-5">
+      <section className="px-5 pb-6">
         {step === 0 ? <StoreStep /> : null}
         {step === 1 ? <CartStep /> : null}
         {step === 2 ? <SiteStep /> : null}
@@ -92,7 +99,9 @@ export function StepWizardDetail() {
           className="mt-2 w-full"
           onClick={() => setStep((s) => Math.min(STEP_COUNT - 1, s + 1))}
         >
-          {step === STEP_COUNT - 1 ? `Approve · ${PRICE.total}` : "Confirm"}
+          {step < CONFIRM_LABELS.length
+            ? CONFIRM_LABELS[step]
+            : `Approve · ${PRICE.total}`}
         </Button>
       </div>
     </div>
@@ -106,8 +115,8 @@ function StoreStep() {
         Pick up from Lowe&apos;s North Frisco?
       </h1>
       <p className="mt-2 text-[12.5px] leading-relaxed text-ink-muted">
-        We&apos;ll buy your materials here. If you built your cart at a
-        different store, call us before you approve.
+        You chose this store when you started the order. If your cart is built
+        at a different one, call us before you approve.
       </p>
       <Card className="mt-4 px-4 py-3.5">
         <div className="flex items-center gap-3">
@@ -146,11 +155,11 @@ function SiteStep() {
   return (
     <div>
       <h1 className="text-[19px] leading-snug font-semibold tracking-tight">
-        Where should we drop it off?
+        Deliver to {SITE.label}?
       </h1>
       <p className="mt-2 text-[12.5px] leading-relaxed text-ink-muted">
-        Pick a saved site or enter a new address. Notes and contact go to the
-        driver.
+        You chose this site when you started the order. Notes and contact go to
+        the driver.
       </p>
       <div className="mt-3.5">
         <DeliveryFields newAddress />

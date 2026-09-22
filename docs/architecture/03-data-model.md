@@ -117,7 +117,7 @@ Saved job sites, so repeat customers don't re-enter addresses.
 
 ### `retailer_stores`
 
-Seeded store list. The dispatcher picks from here — this is the only source of store truth, since the cart email carries no store identifier.
+Seeded store list. The dispatcher picks from here — this is the only source of store truth, since the cart email carries no store identifier (verified across both Home Depot samples).
 
 | Column                                          | Type                          | Notes                               |
 | ----------------------------------------------- | ----------------------------- | ----------------------------------- |
@@ -221,7 +221,7 @@ One row per extraction attempt — the telemetry that makes template drift visib
 | `unit_price_cents`       | int                                         | **Derived**: `line_total_cents / quantity`              |
 | `line_total_cents`       | int NOT NULL DEFAULT 0                      | As printed in the email                                 |
 | `image_url`              | text                                        |                                                         |
-| `aisle` / `bay`          | text                                        | Columns exist in the email but were empty in the sample |
+| `aisle` / `bay`          | text                                        | Columns exist in the email's item cell; populated in one sample, empty in the other. Store-scoped — valid only at the store the cart was built against |
 | `item_status`            | item_status NOT NULL DEFAULT 'pending'      | Drives the deferred substitution feature                |
 | `substituted_by_item_id` | uuid FK → order_items                       | Unused in MVP                                           |
 | `note`                   | text                                        |                                                         |

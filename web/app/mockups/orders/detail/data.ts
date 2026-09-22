@@ -24,8 +24,8 @@ export const ITEMS: Item[] = [
     name: "2×4×8 SPF stud",
     brand: "Top Choice",
     model: "5116",
-    qty: 6,
-    total: "$23.10",
+    qty: 8,
+    total: "$30.80",
   },
   {
     name: "2×6×8 pressure-treated deck board",
@@ -38,15 +38,8 @@ export const ITEMS: Item[] = [
     name: "3 in. deck screws, 1 lb box",
     brand: "Deck Plus",
     model: "8812",
-    qty: 2,
-    total: "$10.80",
-  },
-  {
-    name: "16 oz. wood glue",
-    brand: "Gorilla",
-    model: "6203",
     qty: 1,
-    total: "$1.80",
+    total: "$4.90",
   },
 ];
 

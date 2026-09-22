@@ -119,10 +119,10 @@ Each entry below states the hook that already exists. If an item has no hook, th
 |                  |                                                                                                                                                                           |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **What**         | Tell the driver exactly where in the store each item is                                                                                                                   |
-| **Why deferred** | The email has the columns but **they were empty in the sample**, so we cannot confirm Home Depot populates them. Populating them otherwise requires store-scoped scraping |
+| **Why deferred** | Home Depot does populate them (one sample carries `Aisle 15`/`Bay 002`), but they are store-scoped and the email never names the store — so they are only trustworthy once the order carries a customer-confirmed store                                                                    |
 | **Hook**         | `order_items.aisle` and `order_items.bay` columns exist and are already parsed                                                                                            |
-| **To build**     | Nothing if the email ever populates them — the parser would pick them up. Otherwise, enrichment                                                                           |
-| **Size**         | Zero to large, depending on the answer. **Worth re-checking the email after a few real orders**                                                                           |
+| **To build**     | Nothing to parse. The gate is store confirmation on the order, not data capture                                                                                           |
+| **Size**         | Small, once store confirmation exists                                                                                                                                     |
 
 ### Live price and stock re-verification
 

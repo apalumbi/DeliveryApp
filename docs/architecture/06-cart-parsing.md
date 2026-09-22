@@ -82,7 +82,7 @@ Derived by inspecting a real share-cart email. All selectors below are scoped to
 | Description | Product anchor text with the brand prefix removed | |
 | Model # | Regex `Model\s*#(\S+)` in the product cell | `9988872` |
 | Store SKU # | Regex `Store SKU\s*#(\S+)` in the product cell | `1014148280` |
-| Aisle / Bay | Cell with `width:150px` in the item row | Labels present, **values empty in the sample** |
+| Aisle / Bay | Nested sub-row inside the product cell, beside a pin icon — **not** the `width:150px` cell | Labels always present; values populated in one sample (`Aisle 15`, `Bay 002`), empty in the other. Store-scoped: only valid at the store the cart was built against, which the email never identifies |
 | Quantity | Cell with `width:62px` in the item row | `1` |
 | Line total | Cell with `width:78px` in the item row | `$216.60` → `21660` |
 | Subtotal / Shipping / Sales Tax / Est. Total | `table.sub-total-view.hide_mobile_view`, rows pairing `span.total-heading` with the adjacent value span | |
@@ -93,14 +93,16 @@ Each item is one `<tr>` whose direct `<td>` children are, in order:
 
 ```
 <tr>
-  <td>                          <!-- product: nested table with image + name + model + sku -->
-  <td style="…width:150px">     <!-- aisle / bay -->
+  <td>                          <!-- product: nested table with image + name + model + sku + aisle/bay sub-row -->
+  <td style="…width:150px">     <!-- "In Store" column — empty in both samples -->
   <td style="…width:62px">      <!-- quantity -->
   <td style="…width:78px">      <!-- line total -->
 </tr>
 ```
 
 Extraction is therefore **row-relative**, not a global selector sweep. This matters: `width:150px` also appears on the *header* row (the "In Store" column heading), so a naive global selector would pick up the header as if it were an item.
+
+**Aisle/Bay correction.** The labels and values live in a nested sub-row *inside the product cell* — `<td style="padding-left:10px;font-size:14px;">Aisle 15<br/>Bay 002</td>`, beside a pin icon — not in the `width:150px` cell, which is empty in both samples. An earlier revision of the field map above said otherwise.
 
 ### The duplicate-view trap
 
@@ -203,7 +205,8 @@ The manual path writes a `parse_attempts` row with `strategy = 'manual'`, so we 
 
 | Fixture | Status |
 |---|---|
-| `homedepot/single-item.eml` | **Available** — the sample in `External Notes/` |
+| `homedepot/single-item.eml` | **Available** — `External Notes/Share Cart Invitation From Anthony Palumbi.eml` (aisle/bay empty) |
+| `homedepot/single-item-aisle-bay.eml` | **Available** — `External Notes/Share Cart Invitation From Joe Haas.eml` (aisle/bay populated) |
 | `homedepot/multi-item.eml` | **Needed** — see below |
 | `homedepot/empty-cart.eml` | **Needed** |
 | `lowes/*.eml` | **Needed** — see below |
@@ -220,7 +223,7 @@ Being explicit about these, because they are real gaps rather than hypotheticals
 
 1. **Multi-item carts are unverified.** The sample contains exactly one item. The row structure above is inferred to repeat, but that has not been observed. A multi-item fixture is required before the parser can be considered done — and the reconciliation check is the guard that will catch it if the inference is wrong.
 2. **The Lowe's email format is unknown.** `LowesCartParser` cannot be specified until a real Lowe's share-cart email is captured. Until then, Lowe's carts route to the LLM tier, which is a working but costlier path. This is open blocker #1 in [00-overview](00-overview.md).
-3. **Aisle/Bay values were empty.** The columns exist and are parsed, but no sample has ever had values in them. Whether Home Depot populates them for in-store-available items is unknown — which is why aisle data is deferred rather than built on.
+3. **Aisle/Bay are store-scoped.** Values do appear — the second sample carries `Aisle 15` / `Bay 002`, the first carries the labels with empty values. But the email never identifies *which* store they belong to, and they are only valid at the store the cart was built against. Aisle data stays deferred until an order carries a customer-confirmed store, and it must never be shown against a store the cart may not have come from.
 
 ---
 
