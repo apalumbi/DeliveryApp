@@ -472,7 +472,7 @@ function Shot({ caption }: { caption: string }) {
     <figure className="mt-3">
       <div className="flex h-40 items-center justify-center gap-2 rounded-field border border-dashed border-hairline bg-sunken/60 text-ink-faint">
         <ImageIcon className="h-4 w-4" />
-        <span className="text-[11px] font-medium tracking-[0.1em] uppercase">
+        <span className="text-[11px] font-medium tracking-widest uppercase">
           Screenshot
         </span>
       </div>

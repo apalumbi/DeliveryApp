@@ -1,28 +1,46 @@
 # Company Portal — Wireframes (scratch)
 
-> **Status:** Brainstorm output, not yet promoted to `docs/`. Mobile frame: 390×844.
-> Companion reading: [order lifecycle](../docs/architecture/04-order-lifecycle.md) · [customer guide](../docs/runbooks/customer-guide.md).
+> **Status:** Brainstorm output, not yet promoted to `docs/`. **Revised 2026-09-21** — the flow below is superseded in part; the built mockups are the source of truth.
+> Built: `/mockups/start` (home → start an order → email → order page) and `/mockups/orders/detail` (order detail directions + the review/approve wizard). The screen hub shows what is still unbuilt.
+> Companion reading: [order lifecycle](../docs/architecture/04-order-lifecycle.md) · [customer guide](../docs/runbooks/customer-guide.md) · [ADR-0010](../docs/adr/0010-customer-captures-store-and-address.md).
 
 ## Screen flow
 
 ```mermaid
 flowchart TD
-    M1["Email: cart received → link"] --> L
-    M2["Email: checkout invite → deep link"] --> L
-    M3["Email: payment request → Stripe link"] --> S
-
-    L[Login · one per company] --> LIST[Orders list]
-    LIST --> DET[Order detail · status timeline]
-
-    DET -->|awaiting your approval| V[Verify items]
-    V -->|looks right| AD[Site · address · instructions]
-    V -->|something's wrong| CALL[Call us — no in-app fix in MVP]
-    AD --> Q[Price breakdown]
-    Q -->|approve| S[Stripe page]
-    S -->|paid| DET
+    L[Login · one per company] --> H["Home — Start an order · See past orders"]
+    H --> W1["Start an order — site → retailer → store"]
+    W1 --> W2["Check your store · build & share the cart"]
+    W2 --> R["Retailer's site — build the cart, share it to the alias"]
+    R --> E["Email — cart ready to review"]
+    E --> D["Order page — confirm store · items · address · price"]
+    D -->|approve| S[Stripe page]
+    S -->|paid| D
+    H -->|see past orders| LIST[Orders list]
+    LIST --> D
 ```
 
+## What changed on 2026-09-21
+
+The ASCII wireframes below are the original brainstorm and no longer match. The deltas:
+
+1. **Home is Uber-ish.** One primary action (Start an order), one secondary (See past orders). The alias left home and now lives where it is needed — the last step of the start flow, next to the instructions. A single line appears when an order is waiting for approval; there is no order list on home.
+2. **The address and the store are captured up front**, not at checkout. This closes the two gaps the email leaves open — see [ADR-0010](../docs/adr/0010-customer-captures-store-and-address.md). The store list is seeded, nearest-to-site first, and each store carries a verified store-page URL.
+3. **The checkout wizard is gone as a separate screen.** The order page confirms what the customer already chose: confirm store → confirm items → confirm delivery → approve. Notes and on-site contact are the only new fields on it.
+4. **Instructions are one per screen** in the start flow, with a code-drawn diagram of the retailer's store page — not a screenshot, so there is nothing to re-capture when a retailer redesigns.
+5. **"Email me the address" was cut** from the share step.
+
+Superseded decisions below: **#1** (the one-page wizard) and **#2** (the alias card on the orders list) no longer apply. **#3** (status-driven CTA) and **#4** (item thumbnails) still hold; the order page is the `awaiting_customer` state of the order detail.
+
+## Open items
+
+- `order_intents` and `retailer_stores.store_url` are not yet in [03-data-model](../docs/architecture/03-data-model.md) — add them when implementation planning starts.
+- The share step still shows a placeholder: we have no reference for the cart's Share button on either site.
+- Store seeding: the list, each store's verified URL, and the retailer's own label for it.
+
 ## Decisions taken in these wireframes
+
+*(Original brainstorm — read "What changed on 2026-09-21" above before relying on these.)*
 
 1. **Wizard = one page, 3 sections, sticky approve button.** One-shot flow; mobile back-navigation shouldn't strand anyone mid-wizard. Three separate screens buys nothing here.
 2. **"Start order" is a card pinned to the top of the Orders list**, not a tab. Every email link lands on this screen, so the alias is always one screen away. "Email me the address" is the mobile workaround — it puts the address in their inbox, which is reachable from inside Home Depot's share dialog.

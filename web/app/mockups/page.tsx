@@ -4,6 +4,11 @@ import Link from "next/link";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 
+import { ExceptionBoard } from "./dispatch/review-exceptions";
+import { GuidedReview } from "./dispatch/review-guided";
+import { ReviewQueue } from "./dispatch/review-queue";
+import { JobBoard } from "./driver/board";
+import { JobDetail, ReceiptPrompt } from "./driver/job";
 import { CleanSaas } from "./orders/clean-saas";
 import { ApprovalEmail } from "./start/email";
 import { StartOrderFlow } from "./start/flow";
@@ -20,12 +25,21 @@ type Screen = {
   Component?: ComponentType;
 };
 
+type Shape = "phone" | "desktop" | "console";
+
 type Group = {
   id: string;
   title: string;
   note: string;
-  shape: "phone" | "desktop";
+  shape: Shape;
   screens: Screen[];
+};
+
+/** Frame width per surface — the same widths the directions pages use. */
+const WIDTH: Record<Shape, string> = {
+  phone: "w-97.5",
+  desktop: "w-160",
+  console: "w-280",
 };
 
 const GROUPS: Group[] = [
@@ -73,24 +87,26 @@ const GROUPS: Group[] = [
   {
     id: "dispatch",
     title: "Dispatcher console",
-    note: "Desktop · internal tool",
-    shape: "desktop",
+    note: "Desktop 1120 · review queue, three directions",
+    shape: "console",
     screens: [
       {
-        name: "Review queue",
-        note: "Parse failures and unmatched aliases; resolve items.",
+        name: "Review queue · checklist",
+        note: "Every order waits here. Items vs the email, the address, the store and its distance, the size, the fees — and the gate that blocks the invite.",
+        href: "/mockups/dispatch",
+        Component: ReviewQueue,
       },
       {
-        name: "Order board",
-        note: "Active orders with aging indicators.",
+        name: "Review queue · guided",
+        note: "One order at a time, priced from a rate card, with the invite the customer will see rendered before you send it.",
+        href: "/mockups/dispatch",
+        Component: GuidedReview,
       },
       {
-        name: "Order detail",
-        note: "Verify/edit items, assign store, enter fees, advance status.",
-      },
-      {
-        name: "Admin",
-        note: "Companies, aliases, portal users, stores, drivers.",
+        name: "Review queue · exceptions",
+        note: "Sorted by risk: exceptions get the full treatment, clean orders get a one-pass lane. Store 7.2 mi out, with the switch decision.",
+        href: "/mockups/dispatch",
+        Component: ExceptionBoard,
       },
     ],
   },
@@ -102,20 +118,34 @@ const GROUPS: Group[] = [
     screens: [
       {
         name: "Job board",
-        note: "Open postings with store and fee.",
+        note: "Open postings with store, item count, and fee. The address stays hidden until accept.",
+        href: "/mockups/driver",
+        Component: JobBoard,
       },
       {
         name: "Job detail",
-        note: "Accept, advance status, capture photos — skippable with a reason.",
+        note: "Accepted: the buy list, the drop-off that just unlocked, and the status ladder.",
+        href: "/mockups/driver",
+        Component: JobDetail,
+      },
+      {
+        name: "Photos",
+        note: "Receipt and delivery prompts — skippable with a reason the dispatcher sees.",
+        href: "/mockups/driver",
+        Component: ReceiptPrompt,
       },
     ],
   },
 ];
 
-function Frame({ screen, shape }: { screen: Screen; shape: Group["shape"] }) {
+function Frame({ screen, shape }: { screen: Screen; shape: Shape }) {
   if (screen.Component) {
     const ScreenComponent = screen.Component;
-    return (
+    return shape === "console" ? (
+      <div className="h-160 overflow-hidden rounded-2xl border border-zinc-800 bg-white shadow-2xl">
+        <ScreenComponent />
+      </div>
+    ) : (
       <div className="h-158.25 overflow-hidden rounded-4xl border border-zinc-800 bg-white shadow-2xl">
         <div data-frame-scroll className="h-full overflow-y-auto">
           <ScreenComponent />
@@ -164,10 +194,7 @@ export default function MockupsPage() {
 
           <div className="mt-5 flex flex-wrap gap-8">
             {group.screens.map((screen) => (
-              <div
-                key={screen.name}
-                className={group.shape === "phone" ? "w-97.5" : "w-160"}
-              >
+              <div key={screen.name} className={WIDTH[group.shape]}>
                 <div className="mb-3 flex items-baseline justify-between gap-3">
                   <span className="text-[13px] font-medium text-zinc-200">
                     {screen.name}

@@ -216,7 +216,7 @@ function StickySummaryDetail() {
       <div className="sticky bottom-0 mt-auto border-t border-hairline bg-surface px-5 pt-3.5 pb-5">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <div className="text-[11px] font-medium tracking-[0.1em] text-ink-faint uppercase">
+            <div className="text-[11px] font-medium tracking-widest text-ink-faint uppercase">
               Total
             </div>
             <div className="text-[17px] font-semibold text-ink tabular-nums">

@@ -1,6 +1,6 @@
 # ADR-0008: The dispatcher assigns the store
 
-- **Status:** Accepted
+- **Status:** Amended by [ADR-0010](0010-customer-captures-store-and-address.md) — the customer now chooses the store up front, and the dispatcher confirms rather than enters it.
 - **Date:** 2026-09-16
 - **Deciders:** Delivery App team
 
