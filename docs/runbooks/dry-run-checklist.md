@@ -33,7 +33,7 @@ Nothing below can be skipped. Several items have external lead times.
 - [ ] MX records verified — send a test email and confirm it arrives
 - [ ] SPF/DKIM/DMARC configured for outbound
 - [ ] Supabase production project created (`us-east-1`)
-- [ ] Migrations applied; RLS verified by the policy test suite
+- [ ] `supabase/migrations/0001_baseline.sql` applied; every `public` table reports RLS on **and** at least one policy
 - [ ] Vercel production deploy live
 - [ ] Stripe live keys configured, webhook endpoint registered
 - [ ] Twilio A2P 10DLC registration **approved** — this has a multi-day lead time; start it first

@@ -2,7 +2,7 @@
 
 Environments, configuration, prerequisites, and the release process.
 
-> **Status:** Planned design. Not yet implemented. Prerequisites below are Phase 1 work.
+> **Status:** Planned design. Not yet implemented — no Supabase project exists yet. The base schema is written (`supabase/migrations/0001_baseline.sql`); the prerequisites below are Phase 1 work.
 
 ---
 
@@ -100,11 +100,36 @@ Two guardrails:
 
 ## Database migrations
 
-- SQL files in `supabase/migrations/`, committed and reviewed like code.
-- Applied with the Supabase CLI: `supabase db push` for staging, the same for production after review.
+Schema is versioned as numbered SQL files in `supabase/migrations/`, committed and reviewed like code. The pattern is Flyway-style: **a base script, then one file per change, applied in order.** Conventions in full in [03-data-model](03-data-model.md#migrations).
+
+| File                | Purpose                                                                     |
+| ------------------- | --------------------------------------------------------------------------- |
+| `0001_baseline.sql` | The base script — the complete schema. Applied once per environment, frozen. |
+| `0002_<change>.sql` | One incremental change.                                                      |
+| `0003_<change>.sql` | …and so on.                                                                  |
+
+Rules:
+
+- **`0001_baseline.sql` is applied exactly once per environment**, to a database with no application schema. It is deliberately not idempotent: a second run fails on the first `create type`, which is the correct signal that migration state has been lost track of.
+- **Never edit a migration that has been applied anywhere.** A fix, a new column, or a new policy is a new numbered file. Editing an applied file diverges environments silently.
 - **No manual schema changes in the dashboard.** Ever. A dashboard change is invisible to the repo and diverges environments silently.
-- RLS policies are created in the same migration as the table they protect.
-- Seed data in `supabase/seed/`, idempotent so it can be re-run safely.
+- **RLS policies are created in the same migration as the table they protect** — never as a follow-up.
+- Applied with the Supabase CLI (`supabase db push` for staging, the same for production after review) or by hand in the SQL editor for the initial bootstrap.
+- Seed data lives in `supabase/seed/`, is idempotent so it can be re-run safely, and is applied **after** migrations — never as part of them.
+
+### Bootstrapping a new environment
+
+1. Create the Supabase project (production: `us-east-1`).
+2. Apply `supabase/migrations/0001_baseline.sql` — either paste it into the SQL editor, or link and push:
+
+   ```bash
+   supabase link --project-ref <ref>
+   supabase db push
+   ```
+
+3. Verify RLS took: every table in `public` should report `rowsecurity = true` and carry at least one policy. A table with RLS on and no policy is inaccessible to everyone but the service role.
+4. Apply the seed, once there is one.
+5. Put the project URL and keys into that environment's configuration (see [Configuration](#configuration)).
 
 ### Rollback posture
 

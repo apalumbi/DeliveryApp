@@ -23,3 +23,15 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Before considering work done: `bun run lint`, `bun run typecheck`, `bun run build`.
 - `bun install` failing with `AccessDenied`/tempdir errors means the devcontainer volumes need the one-time chown from `postCreateCommand` (see `.devcontainer/devcontainer.json`).
 
+## Database
+
+Schema lives at the **repo root** in `supabase/`, not in this directory.
+
+- `supabase/migrations/0001_baseline.sql` is the **base script** — enums, tables, indexes, RLS helper functions, and every policy, in one pass. Applied once per environment, then frozen.
+- Every schema change after it is a **new numbered file**: `0002_<change>.sql`, `0003_<change>.sql`. **Never edit a migration that has been applied anywhere** — environments diverge silently and the repo can't tell you which has the change.
+- RLS policies ship in the same migration as the table they protect, never as a follow-up.
+- The base script is deliberately **not idempotent**. Re-running it fails on the first `create type`; that is the intended signal that migration state was lost track of.
+- Seed data (idempotent, applied after migrations — never as part of them) goes in `supabase/seed/`. There is none yet.
+- Apply by hand in the Supabase SQL editor, in filename order, or with `supabase link --project-ref <ref> && supabase db push`.
+- Conventions: `docs/architecture/03-data-model.md#migrations`. Policy detail: `docs/architecture/10-auth-and-permissions.md`.
+

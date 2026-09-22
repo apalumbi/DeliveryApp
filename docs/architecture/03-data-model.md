@@ -2,7 +2,7 @@
 
 Schema conventions, the entity relationship diagram, and a table-by-table reference.
 
-> **Status:** Planned design. Not yet implemented. Migrations are Phase 1.
+> **Status:** Schema written as `supabase/migrations/0001_baseline.sql`. Not yet applied to any environment.
 
 ---
 
@@ -366,7 +366,38 @@ Route handlers use the **service role** and bypass RLS deliberately — inbound 
 
 ## Migrations
 
-- SQL migration files live in `supabase/migrations/`, committed to the repo and applied with the Supabase CLI.
-- Schema changes are never applied by hand in the dashboard.
-- Seed data (retailer stores, a demo company) lives in `supabase/seed/` and is idempotent.
-- RLS policies are created in the same migration as the table they protect — never as a follow-up.
+Schema changes are **versioned SQL files applied in order** — Flyway-style, not dashboard edits. Three rules:
+
+1. **`supabase/migrations/0001_baseline.sql` is the base script.** It creates everything above — enums, tables, indexes, the RLS helper functions, and every policy — in one pass, against a database that has none of those objects.
+2. **Never edit a migration that has been applied anywhere.** A fix, a new column, or a new policy is a new file with the next number. Editing an applied file means environments silently diverge, and there is no way to tell from the repo which of them actually has the change.
+3. **Files apply in filename order.** The number *is* the version.
+
+| File                            | Purpose                                                                                          |
+| ------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `0001_baseline.sql`             | The base script — the full schema. Applied once per environment, then frozen.                     |
+| `0002_<change>.sql`             | One incremental change.                                                                          |
+| `0003_<change>.sql`             | …and so on, one file per change, never a bulk re-write of what came before.                       |
+
+Naming is zero-padded four digits plus a short `snake_case` description: `0002_add_order_photos.sql`. The Supabase CLI's own matcher accepts any numeric prefix (`^([0-9]+)_(.*)\.sql$`), so this numbering works both by hand and with `supabase db push`.
+
+Applying them:
+
+```bash
+# By hand: run each file, in order, in the Supabase SQL editor.
+# Or, once the project is linked:
+supabase link --project-ref <ref>
+supabase db push
+```
+
+The base script is deliberately **not** idempotent — a second run fails on the first `create type`. A baseline applied twice means migration state has been lost track of, and failing loudly is better than half-applying.
+
+**Rollback posture:** forward-only. Additive changes (a new nullable column, a new table, a new enum value) are safe to ship and are reverted by simply not using them. Destructive changes (dropping a column, narrowing a type) take two deploys: stop using it, then remove it in a later release.
+
+**RLS policies ship in the same migration as the table they protect** — never as a follow-up. A table that exists without its policies is a table with no access control, and the gap between the two migrations is a real exposure.
+
+### Seed data
+
+Reference rows that every environment needs (the `retailer_stores` list) live in `supabase/seed/`, are **idempotent** so they can be re-run safely, and are applied *after* migrations — never as part of them. A migration defines structure; a seed defines rows.
+
+There is deliberately no seed data yet. The Lowe's store list is staged in `External Notes/lowes-nc-stores.json` (118 stores, with number, name, street, city, state, zip, phone, lat/lng — everything `retailer_stores` needs) and is seeded once the service area is settled. Note that the checklist in [11-deployment-and-environments](11-deployment-and-environments.md) and the dry-run checklist currently say **Upstate SC** while that staged list is **North Carolina**; that discrepancy is unresolved, and seeding is blocked on it.
+
